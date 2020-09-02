@@ -39,7 +39,7 @@ void exposeSolverDDP() {
                "during the numerical optimization.\n"
                ":param init_xs: initial guess for state trajectory with T+1 elements (default []).\n"
                ":param init_us: initial guess for control trajectory with T elements (default []) (default []).\n"
-               ":param maxiter: maximun allowed number of iterations (default 100).\n"
+               ":param maxiter: maximum allowed number of iterations (default 100).\n"
                ":param isFeasible: true if the init_xs are obtained from integrating the init_us (rollout) (default "
                "False).\n"
                ":param regInit: initial guess for the regularization value. Very low values are typical\n"
@@ -81,8 +81,8 @@ void exposeSolverDDP() {
            "It rollouts the action model given the computed policy (feedforward terns and feedback\n"
            "gains) by the backwardPass. We can define different step lengths\n"
            ":param stepLength: applied step length (<= 1. and >= 0.)")
-       .def("computeKp", &SolverDDP::computeKp, bp::args("self", "t","dWp"),
-           "Run the backward pass to find Riccati gains associated with target displacement\n")
+       .def("computeKp", &SolverDDP::computeKp, bp::args("self", "t","dWp","dKp"),
+           "Compute the Riccati gain associated with target displacement at knot t\n")
       .add_property("Vxx", make_function(&SolverDDP::get_Vxx, bp::return_value_policy<bp::copy_const_reference>()),
                     "Vxx")
       .add_property("Vx", make_function(&SolverDDP::get_Vx, bp::return_value_policy<bp::copy_const_reference>()), "Vx")
