@@ -39,6 +39,7 @@ void exposeCore() {
   exposeActivationQuad();
   exposeActivationQuadFlat();
   exposeActivationQuadLog();
+  exposeActivationNorm2Barrier();
   exposeActivationWeightedQuad();
   exposeActivationQuadraticBarrier();
   exposeActivationWeightedQuadraticBarrier();

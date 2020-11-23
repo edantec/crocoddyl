@@ -41,6 +41,7 @@ void exposeDifferentialActionLQR();
 void exposeActivationQuad();
 void exposeActivationQuadFlat();
 void exposeActivationQuadLog();
+void exposeActivationNorm2Barrier();
 void exposeActivationWeightedQuad();
 void exposeActivationQuadraticBarrier();
 void exposeActivationWeightedQuadraticBarrier();

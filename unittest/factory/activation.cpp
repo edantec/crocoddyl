@@ -10,6 +10,7 @@
 #include "crocoddyl/core/activations/quadratic.hpp"
 #include "crocoddyl/core/activations/quadratic-flat.hpp"
 #include "crocoddyl/core/activations/quadratic-log.hpp"
+#include "crocoddyl/core/activations/norm2-barrier.hpp"
 #include "crocoddyl/core/activations/smooth-1norm.hpp"
 #include "crocoddyl/core/activations/smooth-2norm.hpp"
 #include "crocoddyl/core/activations/weighted-quadratic.hpp"
@@ -32,6 +33,9 @@ std::ostream& operator<<(std::ostream& os, ActivationModelTypes::Type type) {
       break;
     case ActivationModelTypes::ActivationModelQuadLog:
       os << "ActivationModelQuadLog";
+      break;
+    case ActivationModelTypes::ActivationModelNorm2Barrier:
+      os << "ActivationModelNorm2Barrier";
       break;
     case ActivationModelTypes::ActivationModelSmooth1Norm:
       os << "ActivationModelSmooth1Norm";
@@ -80,8 +84,8 @@ boost::shared_ptr<crocoddyl::ActivationModelAbstract> ActivationModelFactory::cr
     case ActivationModelTypes::ActivationModelQuadLog:
       activation = boost::make_shared<crocoddyl::ActivationModelQuadLog>(nr,sigma2);
       break;
-    case ActivationModelTypes::ActivationModelSmoothAbs:
-      activation = boost::make_shared<crocoddyl::ActivationModelSmoothAbs>(nr);
+    case ActivationModelTypes::ActivationModelNorm2Barrier:
+      activation = boost::make_shared<crocoddyl::ActivationModelNorm2Barrier>(nr, threshold);
       break;
     case ActivationModelTypes::ActivationModelSmooth1Norm:
       activation = boost::make_shared<crocoddyl::ActivationModelSmooth1Norm>(nr, eps);
@@ -98,10 +102,6 @@ boost::shared_ptr<crocoddyl::ActivationModelAbstract> ActivationModelFactory::cr
     case ActivationModelTypes::ActivationModelWeightedQuadraticBarrier:
       activation = boost::make_shared<crocoddyl::ActivationModelWeightedQuadraticBarrier>(
           crocoddyl::ActivationBounds(lb, ub), weights);
-      break;
-    case ActivationModelTypes::ActivationModelNorm2Barrier:
-      activation = boost::make_shared<crocoddyl::ActivationModelNorm2Barrier>(
-                                                                              nr, 0.3);
       break;
     default:
       throw_pretty(__FILE__ ":\n Construct wrong ActivationModelTypes::Type");
