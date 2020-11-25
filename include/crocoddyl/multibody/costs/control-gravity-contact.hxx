@@ -52,9 +52,8 @@ void CostModelControlGravContactTpl<Scalar>::calc(const boost::shared_ptr<CostDa
                  << "u has wrong dimension (it should be " + std::to_string(nu_) + ")");
   }
   Data* d = static_cast<Data*>(data.get());
-  
-  data->r = u - pinocchio::rnea(*pin_model_,*(d->pinocchio),x.head(state_->get_nq()),x.tail(state_->get_nv()),Eigen::VectorXd::Zero(state_->get_nv()),d->fext);
-  
+
+  data->r = u - pinocchio::rnea(*pin_model_,*(d->pinocchio),x.head(state_->get_nq()),x.tail(state_->get_nv()),Eigen::VectorXd::Zero(state_->get_nv()),d->fext).tail(nu_);
   activation_->calc(data->activation, data->r);
   data->cost = data->activation->a_value;
 }
@@ -62,6 +61,7 @@ void CostModelControlGravContactTpl<Scalar>::calc(const boost::shared_ptr<CostDa
 template <typename Scalar>
 void CostModelControlGravContactTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbstract>& data,
                                            const Eigen::Ref<const VectorXs>& x, const Eigen::Ref<const VectorXs>& u) {
+
   if (nu_ == 0) {
     throw_pretty("Invalid argument: "
                  << "it seems to be an autonomous system, if so, don't add this cost function");
@@ -73,10 +73,10 @@ void CostModelControlGravContactTpl<Scalar>::calcDiff(const boost::shared_ptr<Co
   Data* d = static_cast<Data*>(data.get());
 
   pinocchio::computeRNEADerivatives(*pin_model_,*(d->pinocchio),x.head(state_->get_nq()),x.tail(state_->get_nv()),Eigen::VectorXd::Zero(state_->get_nv()),d->fext,
-                                    d->rnea_partial_dx.topRows(state_->get_nq()),d->rnea_partial_dx.bottomRows(state_->get_nv()),d->rnea_partial_da);
-
-  activation_->calcDiff(data->activation, data->r);
+                                    d->rnea_partial_dx.topRows(state_->get_nv()),d->rnea_partial_dx.bottomRows(state_->get_nv()),d->rnea_partial_da);
   
+  activation_->calcDiff(data->activation, data->r);
+
   data->Lu = data->activation->Ar;
   data->Lx = - d->rnea_partial_dx * data->activation->Ar;
   data->Lxx = d->rnea_partial_dx * data->activation->Arr * d->rnea_partial_dx.transpose();

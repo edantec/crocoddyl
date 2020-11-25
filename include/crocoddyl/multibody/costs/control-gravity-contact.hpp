@@ -158,7 +158,7 @@ struct CostDataControlGravContactTpl : public CostDataAbstractTpl<_Scalar> {
 
   template <template <typename Scalar> class Model>
   CostDataControlGravContactTpl(Model<Scalar>* const model, DataCollectorAbstract* const data)
-      : Base(model, data),rnea_partial_dx(model->get_state()->get_nx(),model->get_nu()),
+      : Base(model, data),rnea_partial_dx(model->get_state()->get_ndx(),model->get_nu()),
                           rnea_partial_da(model->get_state()->get_nv(),model->get_nu()) {
     rnea_partial_dx.setZero();
     rnea_partial_da.setZero();
