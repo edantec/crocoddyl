@@ -10,13 +10,13 @@
 
 namespace crocoddyl {
 template <typename Scalar>
-CostModelControlGravTpl<Scalar>::CostModelControlGravTpl(boost::shared_ptr<StateMultibody> state,
+CostModelControlGravContactTpl<Scalar>::CostModelControlGravContactTpl(boost::shared_ptr<StateMultibody> state,
                                                  boost::shared_ptr<ActivationModelAbstract> activation)
     : Base(state, activation), pin_model_(state->get_pinocchio()) {
 }
 
 template <typename Scalar>
-CostModelControlGravTpl<Scalar>::CostModelControlGravTpl(boost::shared_ptr<StateMultibody> state,
+CostModelControlGravContactTpl<Scalar>::CostModelControlGravContactTpl(boost::shared_ptr<StateMultibody> state,
                                                  boost::shared_ptr<ActivationModelAbstract> activation,
                                                  const std::size_t& nu)
     : Base(state, activation, nu), pin_model_(state->get_pinocchio()) {
@@ -27,21 +27,21 @@ CostModelControlGravTpl<Scalar>::CostModelControlGravTpl(boost::shared_ptr<State
 }
 
 template <typename Scalar>
-CostModelControlGravTpl<Scalar>::CostModelControlGravTpl(boost::shared_ptr<StateMultibody> state)
+CostModelControlGravContactTpl<Scalar>::CostModelControlGravContactTpl(boost::shared_ptr<StateMultibody> state)
     : Base(state, state->get_nv()), pin_model_(state->get_pinocchio()) {
 }
 
 template <typename Scalar>
-CostModelControlGravTpl<Scalar>::CostModelControlGravTpl(boost::shared_ptr<StateMultibody> state,
+CostModelControlGravContactTpl<Scalar>::CostModelControlGravContactTpl(boost::shared_ptr<StateMultibody> state,
                                                  const std::size_t& nu)
     : Base(state, nu, nu), pin_model_(state->get_pinocchio()) {
 }
 
 template <typename Scalar>
-CostModelControlGravTpl<Scalar>::~CostModelControlGravTpl() {}
+CostModelControlGravContactTpl<Scalar>::~CostModelControlGravContactTpl() {}
 
 template <typename Scalar>
-void CostModelControlGravTpl<Scalar>::calc(const boost::shared_ptr<CostDataAbstract>& data,
+void CostModelControlGravContactTpl<Scalar>::calc(const boost::shared_ptr<CostDataAbstract>& data,
                                        const Eigen::Ref<const VectorXs>& x, const Eigen::Ref<const VectorXs>& u) {
   if (nu_ == 0) {
     throw_pretty("Invalid argument: "
@@ -52,15 +52,15 @@ void CostModelControlGravTpl<Scalar>::calc(const boost::shared_ptr<CostDataAbstr
                  << "u has wrong dimension (it should be " + std::to_string(nu_) + ")");
   }
   Data* d = static_cast<Data*>(data.get());
-  //const boost::shared_ptr<StateMultibody>& state = boost::static_pointer_cast<StateMultibody>(state_);
-  data->r = u - pinocchio::rnea(*pin_model_,*(d->pinocchio),x.head(state_->get_nq()),x.tail(state_->get_nv()),Eigen::VectorXd::Zero(state_->get_nv()));
-
+  
+  data->r = u - pinocchio::rnea(*pin_model_,*(d->pinocchio),x.head(state_->get_nq()),x.tail(state_->get_nv()),Eigen::VectorXd::Zero(state_->get_nv()),d->fext);
+  
   activation_->calc(data->activation, data->r);
   data->cost = data->activation->a_value;
 }
 
 template <typename Scalar>
-void CostModelControlGravTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbstract>& data,
+void CostModelControlGravContactTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbstract>& data,
                                            const Eigen::Ref<const VectorXs>& x, const Eigen::Ref<const VectorXs>& u) {
   if (nu_ == 0) {
     throw_pretty("Invalid argument: "
@@ -71,8 +71,8 @@ void CostModelControlGravTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataA
                  << "u has wrong dimension (it should be " + std::to_string(nu_) + ")");
   }
   Data* d = static_cast<Data*>(data.get());
-  //const boost::shared_ptr<StateMultibody>& state = boost::static_pointer_cast<StateMultibody>(state_);
-  pinocchio::computeRNEADerivatives(*pin_model_,*(d->pinocchio),x.head(state_->get_nq()),x.tail(state_->get_nv()),Eigen::VectorXd::Zero(state_->get_nv()),
+
+  pinocchio::computeRNEADerivatives(*pin_model_,*(d->pinocchio),x.head(state_->get_nq()),x.tail(state_->get_nv()),Eigen::VectorXd::Zero(state_->get_nv()),d->fext,
                                     d->rnea_partial_dx.topRows(state_->get_nq()),d->rnea_partial_dx.bottomRows(state_->get_nv()),d->rnea_partial_da);
 
   activation_->calcDiff(data->activation, data->r);
@@ -85,7 +85,7 @@ void CostModelControlGravTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataA
 }
 
 template <typename Scalar>
-boost::shared_ptr<CostDataAbstractTpl<Scalar> > CostModelControlGravTpl<Scalar>::createData(
+boost::shared_ptr<CostDataAbstractTpl<Scalar> > CostModelControlGravContactTpl<Scalar>::createData(
     DataCollectorAbstract* const data) {
   return boost::allocate_shared<Data>(Eigen::aligned_allocator<Data>(), this, data);
 }
