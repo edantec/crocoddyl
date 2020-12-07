@@ -8,36 +8,36 @@
 
 #include "python/crocoddyl/core/core.hpp"
 #include "python/crocoddyl/core/activation-base.hpp"
-#include "crocoddyl/core/activations/quadratic-flat.hpp"
+#include "crocoddyl/core/activations/quadratic-flat-exp.hpp"
 
 namespace crocoddyl {
 namespace python {
 
-void exposeActivationQuadFlat() {
-  bp::class_<ActivationModelQuadFlat, bp::bases<ActivationModelAbstract> >(
-      "ActivationModelQuadFlat",
+void exposeActivationQuadFlatExp() {
+  bp::class_<ActivationModelQuadFlatExp, bp::bases<ActivationModelAbstract> >(
+      "ActivationModelQuadFlatExp",
       "Quadratic flat activation model.\n\n"
       "A quadratic flat action describes a quadratic flat function that depends on the residual, i.e.\n"
-      "1 - exp(*||r||^2 / sigma2).",
-      bp::init<int,double>(bp::args("self", "nr","sigma2"),
+      "1 - exp(-||r||^2 / alpha).",
+      bp::init<int,double>(bp::args("self", "nr","alpha"),
                     "Initialize the activation model.\n\n"
                     ":param nr: dimension of the cost-residual vector"
-                    "param sigma2: width of basin"))
-      .def("calc", &ActivationModelQuadFlat::calc, bp::args("self", "data", "r"),
-           "Compute the 1 - exp(*||r||^2 / sigma).\n\n"
+                    "param alpha: width of basin"))
+      .def("calc", &ActivationModelQuadFlatExp::calc, bp::args("self", "data", "r"),
+           "Compute the 1 - exp(-||r||^2 / alpha).\n\n"
            ":param data: activation data\n"
            ":param r: residual vector")
-      .def("calcDiff", &ActivationModelQuadFlat::calcDiff, bp::args("self", "data", "r"),
+      .def("calcDiff", &ActivationModelQuadFlatExp::calcDiff, bp::args("self", "data", "r"),
            "Compute the derivatives of a quadratic flat function.\n\n"
            "Note that the Hessian is constant, so we don't write again this value.\n"
            ":param data: activation data\n"
            ":param r: residual vector \n")
-      .def("createData", &ActivationModelQuadFlat::createData, bp::args("self"),
+      .def("createData", &ActivationModelQuadFlatExp::createData, bp::args("self"),
            "Create the quadratic flat activation data.\n\n")
-      .add_property("sigma2",
-                    bp::make_function(&ActivationModelQuadFlat::get_sigma2,
+      .add_property("alpha",
+                    bp::make_function(&ActivationModelQuadFlatExp::get_alpha,
                                       bp::return_value_policy<bp::return_by_value>()),
-                    bp::make_function(&ActivationModelQuadFlat::set_sigma2),
+                    bp::make_function(&ActivationModelQuadFlatExp::set_alpha),
                     "threshold");
 }
 

@@ -67,10 +67,14 @@ template <typename Scalar>
 class ActivationModelQuadTpl;
 
 template <typename Scalar>
-class ActivationModelQuadFlatTpl;
+class ActivationModelQuadFlatExpTpl;
+template <typename Scalar>
+struct ActivationDataQuadFlatExpTpl;
 
 template <typename Scalar>
-class ActivationModelQuadLogTpl;
+class ActivationModelQuadFlatLogTpl;
+template <typename Scalar>
+struct ActivationDataQuadFlatLogTpl;
 
 template <typename Scalar>
 class ActivationModelWeightedQuadTpl;
@@ -204,8 +208,10 @@ typedef ActivationModelQuadraticBarrierTpl<double> ActivationModelQuadraticBarri
 typedef ActivationBoundsTpl<double> ActivationBounds;
 typedef ActivationModelWeightedQuadraticBarrierTpl<double> ActivationModelWeightedQuadraticBarrier;
 typedef ActivationModelQuadTpl<double> ActivationModelQuad;
-typedef ActivationModelQuadFlatTpl<double> ActivationModelQuadFlat;
-typedef ActivationModelQuadLogTpl<double> ActivationModelQuadLog;
+typedef ActivationModelQuadFlatExpTpl<double> ActivationModelQuadFlatExp;
+typedef ActivationDataQuadFlatExpTpl<double> ActivationDataQuadFlatExp;
+typedef ActivationModelQuadFlatLogTpl<double> ActivationModelQuadFlatLog;
+typedef ActivationDataQuadFlatLogTpl<double> ActivationDataQuadFlatLog;
 typedef ActivationModelWeightedQuadTpl<double> ActivationModelWeightedQuad;
 typedef ActivationDataWeightedQuadTpl<double> ActivationDataWeightedQuad;
 typedef ActivationModelNorm2BarrierTpl<double> ActivationModelNorm2Barrier;
