@@ -335,7 +335,7 @@ void SolverDDP::computeKp(const std::size_t& t, Eigen::MatrixXd& dWp, Eigen::Mat
   if (nu > 0) {
     Eigen::MatrixXd invQuuFuT = d->Fu.transpose();
     Quu_llt_[t].solveInPlace(invQuuFuT);
-    dKp = invQuuFuT * dWp;
+    dKp.noalias() = invQuuFuT * dWp;
     dWp.noalias() = (d->Fx.transpose() - Qxu_[t] * invQuuFuT) * dWp;
   }
 }
