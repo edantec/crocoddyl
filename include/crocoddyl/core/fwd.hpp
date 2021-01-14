@@ -69,12 +69,12 @@ class ActivationModelQuadTpl;
 template <typename Scalar>
 class ActivationModelQuadFlatExpTpl;
 template <typename Scalar>
-struct ActivationDataQuadFlatExpTpl;
+class ActivationDataQuadFlatExpTpl;
 
 template <typename Scalar>
 class ActivationModelQuadFlatLogTpl;
 template <typename Scalar>
-struct ActivationDataQuadFlatLogTpl;
+class ActivationDataQuadFlatLogTpl;
 
 template <typename Scalar>
 class ActivationModelWeightedQuadTpl;

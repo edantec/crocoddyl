@@ -14,7 +14,7 @@ namespace crocoddyl {
 namespace python {
 
 void exposeActivationQuadFlatLog() {
-  bp::class_<ActivationModelQuadFlatLog, bp::bases<ActivationModelAbstract>>(
+  bp::class_<ActivationModelQuadFlatLog, bp::bases<ActivationModelAbstract> >(
       "ActivationModelQuadFlatLog",
       "Quadratic flat activation model.\n"
       "A quadratic flat action describes a quadratic flat function that "
@@ -28,8 +28,7 @@ void exposeActivationQuadFlatLog() {
            "Compute the log(1 + ||r||^2 / alpha).\n"
            ":param data: activation data\n"
            ":param r: residual vector")
-      .def("calcDiff", &ActivationModelQuadFlatLog::calcDiff,
-           bp::args("self", "data", "r"),
+      .def("calcDiff", &ActivationModelQuadFlatLog::calcDiff, bp::args("self", "data", "r"),
            "Compute the derivatives of a quadratic flat function.\n"
            "Note that the Hessian is constant, so we don't write again this "
            "value.\n"
@@ -37,11 +36,8 @@ void exposeActivationQuadFlatLog() {
            ":param r: residual vector \n")
       .def("createData", &ActivationModelQuadFlatLog::createData, bp::args("self"),
            "Create the quadratic flat activation data.\n")
-      .add_property(
-          "alpha",
-          bp::make_function(&ActivationModelQuadFlatLog::get_alpha,
-                            bp::return_value_policy<bp::return_by_value>()),
-          bp::make_function(&ActivationModelQuadFlatLog::set_alpha), "alpha");
+      .add_property("alpha", bp::make_function(&ActivationModelQuadFlatLog::get_alpha),
+                    bp::make_function(&ActivationModelQuadFlatLog::set_alpha), "alpha");
 }
 
 }  // namespace python

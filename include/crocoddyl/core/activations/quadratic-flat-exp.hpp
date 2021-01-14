@@ -9,8 +9,6 @@
 #ifndef CROCODDYL_CORE_ACTIVATIONS_QUADRATIC_FLAT_EXP_HPP_
 #define CROCODDYL_CORE_ACTIVATIONS_QUADRATIC_FLAT_EXP_HPP_
 
-#include <iostream>
-#include <stdexcept>
 #include "crocoddyl/core/fwd.hpp"
 #include "crocoddyl/core/activation-base.hpp"
 #include "crocoddyl/core/utils/exception.hpp"
@@ -20,9 +18,10 @@ namespace crocoddyl {
 /*
  * @brief Quadratic-flat-exp activation
  *
- * This activation function describes a quadratic exponential activation depending on the square norm
- * of a residual vector, i.e. \f[ \begin{equation} 1 - exp(-\|\mathbf{r}\|^2 / \alpha) \end{equation}
- * \f] where \f$\alpha\f$ defines the width of the quadratic basin, \f$r\f$ is the scalar residual, 
+ * This activation function describes a quadratic exponential activation
+ * depending on the square norm of a residual vector, i.e. \f[ \begin{equation}
+ * 1 - exp(\|\mathbf{r}\|^2 / \alpha) \end{equation} \f] where \f$\alpha\f$
+ * defines the width of the quadratic basin, \f$r\f$ is the scalar residual,
  * \f$nr\f$ is the dimension of the residual vector. Far
  * away from zero, the quadFlat activation is nearly flat.
  *
@@ -33,7 +32,7 @@ namespace crocoddyl {
  */
 template <typename _Scalar>
 class ActivationModelQuadFlatExpTpl : public ActivationModelAbstractTpl<_Scalar> {
-public:
+ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   typedef _Scalar Scalar;
@@ -45,7 +44,7 @@ public:
   typedef typename MathBase::MatrixXs MatrixXs;
 
   /*
-   * @brief Initialize the quadFlatExp activation model
+   * @brief Initialize the quadratic-flat-exp activation model
    *
    * The default `alpha` value is defined as 1.
    *
@@ -63,7 +62,7 @@ public:
   virtual ~ActivationModelQuadFlatExpTpl(){};
 
   /*
-   * @brief Compute the quadFlatExp function
+   * @brief Compute the quadratic-flat-exp function
    *
    * @param[in] data  Quadratic-flat activation data
    * @param[in] r     Residual vector \f$\mathbf{r}\in\mathbb{R}^{nr}\f$
@@ -80,7 +79,7 @@ public:
   };
 
   /*
-   * @brief Compute the derivatives of the quadFlatExp function
+   * @brief Compute the derivatives of the quadratic-flat-exp function
    *
    * @param[in] data  Quadratic-flat activation data
    * @param[in] r     Residual vector \f$\mathbf{r}\in\mathbb{R}^{nr}\f$
@@ -99,19 +98,17 @@ public:
   };
 
   /**
-   * @brief Create the quadFlatExp activation data
+   * @brief Create the quadratic-flat-exp activation data
    *
    * @return the activation data
    */
   virtual boost::shared_ptr<ActivationDataAbstract> createData() {
-    boost::shared_ptr<ActivationDataAbstract> data =
-        boost::allocate_shared<ActivationDataAbstract>(Eigen::aligned_allocator<ActivationDataAbstract>(), this);
-    data->Arr.diagonal().fill((Scalar)1.);
+    boost::shared_ptr<Data> data = boost::allocate_shared<Data>(Eigen::aligned_allocator<Data>(), this);
     return data;
   };
 
-  const Scalar &get_alpha() const { return alpha_; };
-  void set_alpha(const Scalar &alpha) { alpha_ = alpha; };
+  Scalar get_alpha() const { return alpha_; };
+  void set_alpha(const Scalar alpha) { alpha_ = alpha; };
 
  protected:
   using Base::nr_;  //!< Dimension of the residual vector
@@ -121,7 +118,7 @@ public:
 };
 
 /*
- * @brief Data structure of the quadFlatExp activation
+ * @brief Data structure of the quadratic-flat-exp activation
  *
  * @param[in] a0  computed in calc to avoid recomputation
  * @param[in] a1  computed in calcDiff to avoid recomputation
@@ -135,7 +132,7 @@ struct ActivationDataQuadFlatExpTpl : public ActivationDataAbstractTpl<_Scalar> 
   typedef ActivationDataAbstractTpl<Scalar> Base;
 
   template <typename Activation>
-  explicit ActivationDataQuadFlatExpTpl(Activation *const activation): Base(activation), a0(0), a1(0) {}
+  explicit ActivationDataQuadFlatExpTpl(Activation *const activation) : Base(activation), a0(0), a1(0) {}
 
   Scalar a0;
   Scalar a1;
@@ -143,4 +140,4 @@ struct ActivationDataQuadFlatExpTpl : public ActivationDataAbstractTpl<_Scalar> 
 
 }  // namespace crocoddyl
 
-#endif // CROCODDYL_CORE_ACTIVATIONS_QUADRATIC_FLAT_EXP_HPP_
+#endif  // CROCODDYL_CORE_ACTIVATIONS_QUADRATIC_FLAT_EXP_HPP_

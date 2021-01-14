@@ -9,8 +9,6 @@
 #ifndef CROCODDYL_CORE_ACTIVATIONS_QUADRATIC_FLAT_LOG_HPP_
 #define CROCODDYL_CORE_ACTIVATIONS_QUADRATIC_FLAT_LOG_HPP_
 
-#include <iostream>
-#include <stdexcept>
 #include "crocoddyl/core/fwd.hpp"
 #include "crocoddyl/core/activation-base.hpp"
 #include "crocoddyl/core/utils/exception.hpp"
@@ -20,10 +18,18 @@ namespace crocoddyl {
 /**
  * @brief Quadratic-flat-log activation
  *
+<<<<<<< HEAD
  * This activation function describes a logarithmic quadratic activation depending
  * on the quadratic norm of a residual vector, i.e. \f[ \begin{equation} log(1 + \|\mathbf{r}\|^2 / \alpha)
  * \end{equation} \f] where \f$\alpha\f$ defines the width of the quadratic basin,
  * \f$r\f$ is the scalar residual, \f$nr\f$ is the dimension of the residual vector.
+=======
+ * This activation function describes a logarithmic quadratic activation
+ * depending on the quadratic norm of a residual vector, i.e. \f[
+ * \begin{equation} log(1 + \|\mathbf{r}\|^2 / \alpha) \end{equation} \f] where
+ * \f$\alpha\f$ defines the width of the quadratic basin, \f$r\f$ is the scalar
+ * residual, \f$nr\f$ is the dimension of the residual vector.
+>>>>>>> eebe80ad2abf740ab6c54ed1b3e836ab1836aaf2
  *
  * The computation of the function and it derivatives are carried out in
  * `calc()` and `caldDiff()`, respectively.
@@ -32,7 +38,7 @@ namespace crocoddyl {
  */
 template <typename _Scalar>
 class ActivationModelQuadFlatLogTpl : public ActivationModelAbstractTpl<_Scalar> {
-public:
+ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   typedef _Scalar Scalar;
@@ -44,7 +50,7 @@ public:
   typedef typename MathBase::MatrixXs MatrixXs;
 
   /*
-   * @brief Initialize the quadFlatLog activation model
+   * @brief Initialize the quadratic-flat-log activation model
    *
    * The default `alpha` value is defined as 1.
    *
@@ -62,7 +68,7 @@ public:
   virtual ~ActivationModelQuadFlatLogTpl(){};
 
   /*
-   * @brief Compute the quadFlatLog function
+   * @brief Compute the quadratic-flat-log function
    *
    * @param[in] data  Quadratic-log activation data
    * @param[in] r     Residual vector \f$\mathbf{r}\in\mathbb{R}^{nr}\f$
@@ -78,8 +84,8 @@ public:
   };
 
   /*
-   * @brief Compute the derivatives of the quadFlatLog function
-   * 
+   * @brief Compute the derivatives of the quadratic-flat-log function
+   *
    * @param[in] data  Quadratic-log activation data
    * @param[in] r     Residual vector \f$\mathbf{r}\in\mathbb{R}^{nr}\f$
    */
@@ -97,19 +103,17 @@ public:
   };
 
   /*
-   * @brief Create the quadFlatLog activation data
+   * @brief Create the quadratic-flat-log activation data
    *
    * @return the activation data
    */
   virtual boost::shared_ptr<ActivationDataAbstract> createData() {
-    boost::shared_ptr<ActivationDataAbstract> data =
-        boost::allocate_shared<ActivationDataAbstract>(Eigen::aligned_allocator<ActivationDataAbstract>(), this);
-    data->Arr.diagonal().fill((Scalar)1.);
+    boost::shared_ptr<Data> data = boost::allocate_shared<Data>(Eigen::aligned_allocator<Data>(), this);
     return data;
   };
 
-  const Scalar &get_alpha() const { return alpha_; };
-  void set_alpha(const Scalar &alpha) { alpha_ = alpha; };
+  Scalar get_alpha() const { return alpha_; };
+  void set_alpha(const Scalar alpha) { alpha_ = alpha; };
 
  protected:
   using Base::nr_;  //!< Dimension of the residual vector
@@ -119,7 +123,7 @@ public:
 };
 
 /*
- * @brief Data structure of the quadFlatLog activation
+ * @brief Data structure of the quadratic-flat-log activation
  *
  * @param[in] a0  computed in calc to avoid recomputation
  * @param[in] a1  computed in calcDiff to avoid recomputation
@@ -133,7 +137,7 @@ struct ActivationDataQuadFlatLogTpl : public ActivationDataAbstractTpl<_Scalar> 
   typedef ActivationDataAbstractTpl<Scalar> Base;
 
   template <typename Activation>
-  explicit ActivationDataQuadFlatLogTpl(Activation *const activation): Base(activation), a0(0), a1(0) {}
+  explicit ActivationDataQuadFlatLogTpl(Activation *const activation) : Base(activation), a0(0), a1(0) {}
 
   Scalar a0;
   Scalar a1;
@@ -141,4 +145,4 @@ struct ActivationDataQuadFlatLogTpl : public ActivationDataAbstractTpl<_Scalar> 
 
 }  // namespace crocoddyl
 
-#endif // CROCODDYL_CORE_ACTIVATIONS_QUADRATIC_FLAT_LOG_HPP_
+#endif  // CROCODDYL_CORE_ACTIVATIONS_QUADRATIC_FLAT_LOG_HPP_
