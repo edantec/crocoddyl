@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh, IRI: CSIC-UPC
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh, IRI: CSIC-UPC
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -40,9 +40,7 @@ void exposeActuationModelMultiCopterBase() {
            "Each actuation model (AM) has its own data that needs to be allocated.\n"
            "This function returns the allocated data for a predefined AM.\n"
            ":return AM data.")
-      .add_property("nrotors",
-                    bp::make_function(&ActuationModelMultiCopterBase::get_nrotors,
-                                      bp::return_value_policy<bp::copy_const_reference>()),
+      .add_property("nrotors", bp::make_function(&ActuationModelMultiCopterBase::get_nrotors),
                     "Number of rotors in the flying base")
       .add_property(
           "tauf",

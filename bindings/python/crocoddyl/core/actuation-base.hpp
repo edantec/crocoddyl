@@ -2,7 +2,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ namespace python {
 
 class ActuationModelAbstract_wrap : public ActuationModelAbstract, public bp::wrapper<ActuationModelAbstract> {
  public:
-  ActuationModelAbstract_wrap(boost::shared_ptr<StateAbstract> state, const std::size_t& nu)
+  ActuationModelAbstract_wrap(boost::shared_ptr<StateAbstract> state, const std::size_t nu)
       : ActuationModelAbstract(state, nu), bp::wrapper<ActuationModelAbstract>() {}
 
   void calc(const boost::shared_ptr<ActuationDataAbstract>& data, const Eigen::Ref<const Eigen::VectorXd>& x,

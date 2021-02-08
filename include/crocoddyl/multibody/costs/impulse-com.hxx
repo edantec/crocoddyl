@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -36,8 +36,8 @@ void CostModelImpulseCoMTpl<Scalar>::calc(const boost::shared_ptr<CostDataAbstra
                                           const Eigen::Ref<const VectorXs>& x, const Eigen::Ref<const VectorXs>&) {
   // Compute the cost residual give the reference CoM position
   Data* d = static_cast<Data*>(data.get());
-  const std::size_t& nq = state_->get_nq();
-  const std::size_t& nv = state_->get_nv();
+  const std::size_t nq = state_->get_nq();
+  const std::size_t nv = state_->get_nv();
   const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(nq);
   const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.tail(nv);
 
@@ -55,8 +55,8 @@ void CostModelImpulseCoMTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAb
   Data* d = static_cast<Data*>(data.get());
 
   // Compute the derivatives of the frame placement
-  const std::size_t& nv = state_->get_nv();
-  const std::size_t& ndx = state_->get_ndx();
+  const std::size_t nv = state_->get_nv();
+  const std::size_t ndx = state_->get_ndx();
   activation_->calcDiff(data->activation, data->r);
 
   pinocchio::getCenterOfMassVelocityDerivatives(*pin_model_.get(), d->pinocchio_internal, d->dvc_dq);

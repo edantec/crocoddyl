@@ -1,8 +1,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh, New York University,
-// Max Planck Gesellschaft
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh,
+//                          New York University, Max Planck Gesellschaft
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -13,8 +13,9 @@
 namespace crocoddyl {
 
 template <typename Scalar>
-ActionModelNumDiffTpl<Scalar>::ActionModelNumDiffTpl(boost::shared_ptr<Base> model)
+ActionModelNumDiffTpl<Scalar>::ActionModelNumDiffTpl(boost::shared_ptr<Base> model, bool with_gauss_approx)
     : Base(model->get_state(), model->get_nu(), model->get_nr()), model_(model) {
+  with_gauss_approx_ = with_gauss_approx;
   disturbance_ = std::sqrt(2.0 * std::numeric_limits<Scalar>::epsilon());
 }
 
@@ -53,7 +54,7 @@ void ActionModelNumDiffTpl<Scalar>::calcDiff(const boost::shared_ptr<ActionDataA
   boost::shared_ptr<Data> data_nd = boost::static_pointer_cast<Data>(data);
 
   const VectorXs& xn0 = data_nd->data_0->xnext;
-  const Scalar& c0 = data_nd->data_0->cost;
+  const Scalar c0 = data_nd->data_0->cost;
   data->xnext = data_nd->data_0->xnext;
   data->cost = data_nd->data_0->cost;
 
@@ -67,7 +68,7 @@ void ActionModelNumDiffTpl<Scalar>::calcDiff(const boost::shared_ptr<ActionDataA
     model_->calc(data_nd->data_x[ix], data_nd->xp, u);
 
     const VectorXs& xn = data_nd->data_x[ix]->xnext;
-    const Scalar& c = data_nd->data_x[ix]->cost;
+    const Scalar c = data_nd->data_x[ix]->cost;
     model_->get_state()->diff(xn0, xn, data_nd->Fx.col(ix));
 
     data->Lx(ix) = (c - c0) / disturbance_;
@@ -85,7 +86,7 @@ void ActionModelNumDiffTpl<Scalar>::calcDiff(const boost::shared_ptr<ActionDataA
     model_->calc(data_nd->data_u[iu], x, u + data_nd->du);
 
     const VectorXs& xn = data_nd->data_u[iu]->xnext;
-    const Scalar& c = data_nd->data_u[iu]->cost;
+    const Scalar c = data_nd->data_u[iu]->cost;
     model_->get_state()->diff(xn0, xn, data_nd->Fu.col(iu));
 
     data->Lu(iu) = (c - c0) / disturbance_;
@@ -118,12 +119,12 @@ const boost::shared_ptr<ActionModelAbstractTpl<Scalar> >& ActionModelNumDiffTpl<
 }
 
 template <typename Scalar>
-const Scalar& ActionModelNumDiffTpl<Scalar>::get_disturbance() const {
+const Scalar ActionModelNumDiffTpl<Scalar>::get_disturbance() const {
   return disturbance_;
 }
 
 template <typename Scalar>
-void ActionModelNumDiffTpl<Scalar>::set_disturbance(const Scalar& disturbance) {
+void ActionModelNumDiffTpl<Scalar>::set_disturbance(const Scalar disturbance) {
   if (disturbance < 0.) {
     throw_pretty("Invalid argument: "
                  << "Disturbance value is positive");
@@ -133,7 +134,7 @@ void ActionModelNumDiffTpl<Scalar>::set_disturbance(const Scalar& disturbance) {
 
 template <typename Scalar>
 bool ActionModelNumDiffTpl<Scalar>::get_with_gauss_approx() {
-  return model_->get_nr() > 0;
+  return with_gauss_approx_;
 }
 
 template <typename Scalar>

@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, University of Edinburgh
+// Copyright (C) 2019-2021, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ PinocchioModelFactory::PinocchioModelFactory(PinocchioModelTypes::Type type) {
     case PinocchioModelTypes::Talos:
       construct_model(EXAMPLE_ROBOT_DATA_MODEL_DIR "/talos_data/robots/talos_reduced.urdf",
                       EXAMPLE_ROBOT_DATA_MODEL_DIR "/talos_data/srdf/talos.srdf");
-      frame_name_ = "gripper_left_fingertip_1_link";
+      frame_name_ = "left_sole_link";
       frame_id_ = model_->getFrameId(frame_name_);
       break;
     case PinocchioModelTypes::RandomHumanoid:
@@ -108,7 +108,7 @@ void PinocchioModelFactory::construct_model(const std::string& urdf_file, const 
 
 boost::shared_ptr<pinocchio::Model> PinocchioModelFactory::create() const { return model_; }
 const std::string& PinocchioModelFactory::get_frame_name() const { return frame_name_; }
-const std::size_t& PinocchioModelFactory::get_frame_id() const { return frame_id_; }
+std::size_t PinocchioModelFactory::get_frame_id() const { return frame_id_; }
 
 /**
  * @brief Compute all the pinocchio data needed for the numerical

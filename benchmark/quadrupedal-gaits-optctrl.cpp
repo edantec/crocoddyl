@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2019, LAAS-CNRS
+// Copyright (C) 2019, LAAS-CNRS
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
   }
 
   // Initial State
-  const std::size_t& N = ddp.get_problem()->get_T();
+  const std::size_t N = ddp.get_problem()->get_T();
   std::vector<Eigen::VectorXd> xs(N, x0);
   std::vector<Eigen::VectorXd> us = problem->quasiStatic_xs(xs);
   xs.push_back(x0);

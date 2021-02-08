@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, University of Edinburgh, IRI: CSIC-UPC
+// Copyright (C) 2019-2020, University of Edinburgh, IRI: CSIC-UPC
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ class SquashingModelSmoothSatTpl : public SquashingModelAbstractTpl<_Scalar> {
   typedef typename MathBase::VectorXs VectorXs;
 
   SquashingModelSmoothSatTpl(const Eigen::Ref<const VectorXs>& u_lb, const Eigen::Ref<const VectorXs>& u_ub,
-                             const std::size_t& ns)
+                             const std::size_t ns)
       : Base(ns) {
     u_lb_ = u_lb;
     u_ub_ = u_ub;
@@ -61,8 +61,8 @@ class SquashingModelSmoothSatTpl : public SquashingModelAbstractTpl<_Scalar> {
          Eigen::pow(a_.array() + Eigen::pow((s - u_ub_).array(), 2), Scalar(-0.5)).array() * (s - u_ub_).array());
   }
 
-  const Scalar& get_smooth() const { return smooth_; };
-  void set_smooth(const Scalar& smooth) {
+  const Scalar get_smooth() const { return smooth_; };
+  void set_smooth(const Scalar smooth) {
     if (smooth < 0.) {
       throw_pretty("Invalid argument: "
                    << "Smooth value has to be positive");

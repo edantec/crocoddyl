@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, University of Edinburgh, LAAS-CNRS
+// Copyright (C) 2019-2020, University of Edinburgh, LAAS-CNRS
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -73,16 +73,16 @@ class ContactModelNumDiffTpl : public ContactModelAbstractTpl<_Scalar> {
   /**
    * @brief Get the disturbance_ object
    *
-   * @return const Scalar&
+   * @return Scalar
    */
-  const Scalar& get_disturbance() const;
+  const Scalar get_disturbance() const;
 
   /**
    * @brief Set the disturbance_ object
    *
    * @param disturbance is the value used to find the numerical derivative
    */
-  void set_disturbance(const Scalar& disturbance);
+  void set_disturbance(const Scalar disturbance);
 
   /**
    * @brief Register functions that take a pinocchio model, a pinocchio data, a state and a control.
@@ -136,7 +136,7 @@ struct ContactDataNumDiffTpl : public ContactDataAbstractTpl<_Scalar> {
     dx.setZero();
     xp.setZero();
 
-    const std::size_t& ndx = model->get_model()->get_state()->get_ndx();
+    const std::size_t ndx = model->get_model()->get_state()->get_ndx();
     data_0 = model->get_model()->createData(data);
     for (std::size_t i = 0; i < ndx; ++i) {
       data_x.push_back(model->get_model()->createData(data));

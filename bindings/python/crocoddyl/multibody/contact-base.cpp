@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -67,12 +67,8 @@ void exposeContactAbstract() {
           "state",
           bp::make_function(&ContactModelAbstract_wrap::get_state, bp::return_value_policy<bp::return_by_value>()),
           "state of the multibody system")
-      .add_property(
-          "nc", bp::make_function(&ContactModelAbstract_wrap::get_nc, bp::return_value_policy<bp::return_by_value>()),
-          "dimension of contact")
-      .add_property(
-          "nu", bp::make_function(&ContactModelAbstract_wrap::get_nu, bp::return_value_policy<bp::return_by_value>()),
-          "dimension of control");
+      .add_property("nc", bp::make_function(&ContactModelAbstract_wrap::get_nc), "dimension of contact")
+      .add_property("nu", bp::make_function(&ContactModelAbstract_wrap::get_nu), "dimension of control");
 
   bp::register_ptr_to_python<boost::shared_ptr<ContactDataAbstract> >();
 

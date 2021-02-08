@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, New York University, Max Planck Gesellschaft,
+// Copyright (C) 2019-2020, LAAS-CNRS, New York University, Max Planck Gesellschaft,
 //                          University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
@@ -77,8 +77,8 @@ class StateNumDiffTpl : public StateAbstractTpl<_Scalar> {
   virtual void JintegrateTransport(const Eigen::Ref<const VectorXs>& x, const Eigen::Ref<const VectorXs>& dx,
                                    Eigen::Ref<MatrixXs> Jin, const Jcomponent firstsecond = both) const;
 
-  const Scalar& get_disturbance() const;
-  void set_disturbance(const Scalar& disturbance);
+  const Scalar get_disturbance() const;
+  void set_disturbance(const Scalar disturbance);
 
  private:
   /**

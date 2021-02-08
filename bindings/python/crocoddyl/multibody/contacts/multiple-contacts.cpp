@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -108,16 +108,10 @@ void exposeContactMultiple() {
       .add_property(
           "state", bp::make_function(&ContactModelMultiple::get_state, bp::return_value_policy<bp::return_by_value>()),
           "state of the multibody system")
-      .add_property("nc",
-                    bp::make_function(&ContactModelMultiple::get_nc, bp::return_value_policy<bp::return_by_value>()),
-                    "dimension of the active contact vector")
-      .add_property(
-          "nc_total",
-          bp::make_function(&ContactModelMultiple::get_nc_total, bp::return_value_policy<bp::return_by_value>()),
-          "dimension of the total contact vector")
-      .add_property("nu",
-                    bp::make_function(&ContactModelMultiple::get_nu, bp::return_value_policy<bp::return_by_value>()),
-                    "dimension of control vector")
+      .add_property("nc", bp::make_function(&ContactModelMultiple::get_nc), "dimension of the active contact vector")
+      .add_property("nc_total", bp::make_function(&ContactModelMultiple::get_nc_total),
+                    "dimension of the total contact vector")
+      .add_property("nu", bp::make_function(&ContactModelMultiple::get_nu), "dimension of control vector")
       .add_property(
           "active",
           bp::make_function(&ContactModelMultiple::get_active, bp::return_value_policy<bp::return_by_value>()),

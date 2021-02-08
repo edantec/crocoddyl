@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, University of Edinburgh, LAAS-CNRS
+// Copyright (C) 2019-2020, University of Edinburgh, LAAS-CNRS
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ void CostModelNumDiffTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbstr
                                            const Eigen::Ref<const VectorXs>& x, const Eigen::Ref<const VectorXs>& u) {
   boost::shared_ptr<Data> data_nd = boost::static_pointer_cast<Data>(data);
 
-  const Scalar& c0 = data_nd->cost;
+  const Scalar c0 = data_nd->cost;
   const VectorXs& r0 = data_nd->r;
   if (get_with_gauss_approx()) {
     model_->get_activation()->calc(data_nd->data_0->activation, r0);
@@ -109,12 +109,12 @@ const boost::shared_ptr<CostModelAbstractTpl<Scalar> >& CostModelNumDiffTpl<Scal
 }
 
 template <typename Scalar>
-const Scalar& CostModelNumDiffTpl<Scalar>::get_disturbance() const {
+const Scalar CostModelNumDiffTpl<Scalar>::get_disturbance() const {
   return disturbance_;
 }
 
 template <typename Scalar>
-void CostModelNumDiffTpl<Scalar>::set_disturbance(const Scalar& disturbance) {
+void CostModelNumDiffTpl<Scalar>::set_disturbance(const Scalar disturbance) {
   disturbance_ = disturbance;
 }
 

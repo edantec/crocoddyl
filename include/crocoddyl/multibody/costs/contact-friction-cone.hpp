@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ class CostModelContactFrictionConeTpl : public CostModelAbstractTpl<_Scalar> {
    */
   CostModelContactFrictionConeTpl(boost::shared_ptr<StateMultibody> state,
                                   boost::shared_ptr<ActivationModelAbstract> activation, const FrameFrictionCone& fref,
-                                  const std::size_t& nu);
+                                  const std::size_t nu);
 
   /**
    * @brief Initialize the contact friction cone cost model
@@ -98,7 +98,7 @@ class CostModelContactFrictionConeTpl : public CostModelAbstractTpl<_Scalar> {
    * @param[in] nu     Dimension of the control vector
    */
   CostModelContactFrictionConeTpl(boost::shared_ptr<StateMultibody> state, const FrameFrictionCone& fref,
-                                  const std::size_t& nu);
+                                  const std::size_t nu);
 
   /**
    * @brief Initialize the contact friction cone cost model

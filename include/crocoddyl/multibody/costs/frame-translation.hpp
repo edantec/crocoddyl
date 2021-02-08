@@ -2,7 +2,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ class CostModelFrameTranslationTpl : public CostModelAbstractTpl<_Scalar> {
    */
   CostModelFrameTranslationTpl(boost::shared_ptr<StateMultibody> state,
                                boost::shared_ptr<ActivationModelAbstract> activation, const FrameTranslation& xref,
-                               const std::size_t& nu);
+                               const std::size_t nu);
 
   /**
    * @brief Initialize the frame translation cost model
@@ -86,7 +86,7 @@ class CostModelFrameTranslationTpl : public CostModelAbstractTpl<_Scalar> {
    * @param[in] nu          Dimension of the control vector
    */
   CostModelFrameTranslationTpl(boost::shared_ptr<StateMultibody> state, const FrameTranslation& xref,
-                               const std::size_t& nu);
+                               const std::size_t nu);
 
   /**
    * @brief Initialize the frame translation cost model

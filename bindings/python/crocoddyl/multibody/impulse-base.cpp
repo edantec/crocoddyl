@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -60,9 +60,7 @@ void exposeImpulseAbstract() {
           "state",
           bp::make_function(&ImpulseModelAbstract_wrap::get_state, bp::return_value_policy<bp::return_by_value>()),
           "state of the multibody system")
-      .add_property(
-          "ni", bp::make_function(&ImpulseModelAbstract_wrap::get_ni, bp::return_value_policy<bp::return_by_value>()),
-          "dimension of impulse");
+      .add_property("ni", bp::make_function(&ImpulseModelAbstract_wrap::get_ni), "dimension of impulse");
 
   bp::register_ptr_to_python<boost::shared_ptr<ImpulseDataAbstract> >();
 

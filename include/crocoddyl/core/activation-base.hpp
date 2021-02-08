@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ class ActivationModelAbstractTpl {
   typedef typename MathBase::VectorXs VectorXs;
   typedef typename MathBase::MatrixXs MatrixXs;
 
-  explicit ActivationModelAbstractTpl(const std::size_t& nr) : nr_(nr){};
+  explicit ActivationModelAbstractTpl(const std::size_t nr) : nr_(nr){};
   virtual ~ActivationModelAbstractTpl(){};
 
   virtual void calc(const boost::shared_ptr<ActivationDataAbstract>& data, const Eigen::Ref<const VectorXs>& r) = 0;
@@ -40,7 +40,7 @@ class ActivationModelAbstractTpl {
     return boost::allocate_shared<ActivationDataAbstract>(Eigen::aligned_allocator<ActivationDataAbstract>(), this);
   };
 
-  const std::size_t& get_nr() const { return nr_; };
+  std::size_t get_nr() const { return nr_; };
 
  protected:
   std::size_t nr_;

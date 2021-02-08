@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2019, LAAS-CNRS
+// Copyright (C) 2019, LAAS-CNRS
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,8 +12,7 @@
 namespace crocoddyl {
 
 template <typename Scalar>
-ImpulseModelAbstractTpl<Scalar>::ImpulseModelAbstractTpl(boost::shared_ptr<StateMultibody> state,
-                                                         const std::size_t& ni)
+ImpulseModelAbstractTpl<Scalar>::ImpulseModelAbstractTpl(boost::shared_ptr<StateMultibody> state, const std::size_t ni)
     : state_(state), ni_(ni) {}
 
 template <typename Scalar>
@@ -50,7 +49,7 @@ const boost::shared_ptr<StateMultibodyTpl<Scalar> >& ImpulseModelAbstractTpl<Sca
 }
 
 template <typename Scalar>
-const std::size_t& ImpulseModelAbstractTpl<Scalar>::get_ni() const {
+std::size_t ImpulseModelAbstractTpl<Scalar>::get_ni() const {
   return ni_;
 }
 

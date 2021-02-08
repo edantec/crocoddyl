@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh, New York University,
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh, New York University,
 // Max Planck Gesellschaft
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
@@ -191,12 +191,12 @@ void StateNumDiffTpl<Scalar>::JintegrateTransport(const Eigen::Ref<const VectorX
                                                   Eigen::Ref<MatrixXs>, const Jcomponent) const {}
 
 template <typename Scalar>
-const Scalar& StateNumDiffTpl<Scalar>::get_disturbance() const {
+const Scalar StateNumDiffTpl<Scalar>::get_disturbance() const {
   return disturbance_;
 }
 
 template <typename Scalar>
-void StateNumDiffTpl<Scalar>::set_disturbance(const Scalar& disturbance) {
+void StateNumDiffTpl<Scalar>::set_disturbance(Scalar disturbance) {
   if (disturbance < 0.) {
     throw_pretty("Invalid argument: "
                  << "Disturbance value is positive");

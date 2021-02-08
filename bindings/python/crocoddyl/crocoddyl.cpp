@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh, INRIA
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh, INRIA
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -21,14 +21,16 @@ BOOST_PYTHON_MODULE(libcrocoddyl_pywrap) {
   eigenpy::enableEigenPy();
 
   typedef double Scalar;
+  typedef Eigen::Matrix<Scalar, 4, 1> Vector4;
   typedef Eigen::Matrix<Scalar, 6, 1> Vector6;
-  // typedef Eigen::Matrix<Scalar, 4, 6> Matrix46;
+  typedef Eigen::Matrix<Scalar, 4, 6> Matrix46;
   typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 3> MatrixX3;
   typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> VectorX;
   typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> MatrixX;
 
+  eigenpy::enableEigenPySpecific<Vector4>();
   eigenpy::enableEigenPySpecific<Vector6>();
-  // eigenpy::enableEigenPySpecific<Matrix46>();
+  eigenpy::enableEigenPySpecific<Matrix46>();
   eigenpy::enableEigenPySpecific<MatrixX3>();
 
   // Register converters between std::vector and Python list

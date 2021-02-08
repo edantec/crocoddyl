@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -106,13 +106,9 @@ void exposeImpulseMultiple() {
       .add_property(
           "state", bp::make_function(&ImpulseModelMultiple::get_state, bp::return_value_policy<bp::return_by_value>()),
           "state of the multibody system")
-      .add_property("ni",
-                    bp::make_function(&ImpulseModelMultiple::get_ni, bp::return_value_policy<bp::return_by_value>()),
-                    "dimension of the active impulse vector")
-      .add_property(
-          "ni_total",
-          bp::make_function(&ImpulseModelMultiple::get_ni_total, bp::return_value_policy<bp::return_by_value>()),
-          "dimension of the total impulse vector")
+      .add_property("ni", bp::make_function(&ImpulseModelMultiple::get_ni), "dimension of the active impulse vector")
+      .add_property("ni_total", bp::make_function(&ImpulseModelMultiple::get_ni_total),
+                    "dimension of the total impulse vector")
       .add_property(
           "active",
           bp::make_function(&ImpulseModelMultiple::get_active, bp::return_value_policy<bp::return_by_value>()),

@@ -1,32 +1,33 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "cost.hpp"
-#include "crocoddyl/multibody/costs/state.hpp"
 #include "crocoddyl/core/costs/control.hpp"
 #include "crocoddyl/multibody/costs/com-position.hpp"
-//#include "crocoddyl/multibody/costs/control-gravity.hpp"
-// #include "crocoddyl/multibody/costs/centroidal-momentum.hpp"
+#include "crocoddyl/multibody/costs/control-gravity.hpp"
+#include "crocoddyl/multibody/costs/state.hpp"
+#include "crocoddyl/core/costs/cost-sum.hpp"
+#include "crocoddyl/core/utils/exception.hpp"
+#include "crocoddyl/multibody/actuations/floating-base.hpp"
+#include "crocoddyl/multibody/costs/contact-friction-cone.hpp"
+#include "crocoddyl/multibody/costs/contact-wrench-cone.hpp"
 #include "crocoddyl/multibody/costs/frame-placement.hpp"
 #include "crocoddyl/multibody/costs/frame-rotation.hpp"
 #include "crocoddyl/multibody/costs/frame-translation.hpp"
 #include "crocoddyl/multibody/costs/frame-velocity.hpp"
-#include "crocoddyl/multibody/costs/contact-friction-cone.hpp"
-#include "crocoddyl/multibody/costs/contact-wrench-cone.hpp"
-#include "crocoddyl/core/costs/cost-sum.hpp"
-#include "crocoddyl/core/utils/exception.hpp"
 
 namespace crocoddyl {
 namespace unittest {
 
 const std::vector<CostModelTypes::Type> CostModelTypes::all(CostModelTypes::init_all());
+const std::vector<CostModelNoFFTypes::Type> CostModelNoFFTypes::all(CostModelNoFFTypes::init_all());
 
-std::ostream& operator<<(std::ostream& os, CostModelTypes::Type type) {
+std::ostream &operator<<(std::ostream &os, CostModelTypes::Type type) {
   switch (type) {
     case CostModelTypes::CostModelState:
       os << "CostModelState";
@@ -64,6 +65,20 @@ std::ostream& operator<<(std::ostream& os, CostModelTypes::Type type) {
   return os;
 }
 
+std::ostream &operator<<(std::ostream &os, CostModelNoFFTypes::Type type) {
+  switch (type) {
+    case CostModelNoFFTypes::CostModelControlGrav:
+      os << "CostModelControlGrav";
+      break;
+    case CostModelNoFFTypes::NbCostModelNoFFTypes:
+      os << "NbCostModelNoFFTypes";
+      break;
+    default:
+      break;
+  }
+  return os;
+}
+
 CostModelFactory::CostModelFactory() {}
 CostModelFactory::~CostModelFactory() {}
 
@@ -76,6 +91,7 @@ boost::shared_ptr<crocoddyl::CostModelAbstract> CostModelFactory::create(CostMod
   boost::shared_ptr<crocoddyl::CostModelAbstract> cost;
   boost::shared_ptr<crocoddyl::StateMultibody> state =
       boost::static_pointer_cast<crocoddyl::StateMultibody>(state_factory.create(state_type));
+
   crocoddyl::FrameIndex frame_index = state->get_pinocchio()->frames.size() - 1;
   pinocchio::SE3 frame_SE3 = pinocchio::SE3::Random();
   if (nu == std::numeric_limits<std::size_t>::max()) {
@@ -100,7 +116,9 @@ boost::shared_ptr<crocoddyl::CostModelAbstract> CostModelFactory::create(CostMod
     // case CostModelTypes::CostModelCentroidalMomentum:
     //   cost = boost::make_shared<crocoddyl::CostModelCentroidalMomentum>(state_,
     //                                                                      activation_factory.create(activation_type,
-    //                                                                      6), Vector6d::Random(), nu);
+    //                                                                      6),
+    //                                                                      Vector6d::Random(),
+    //                                                                      nu);
     //   break;
     case CostModelTypes::CostModelFramePlacement:
       cost = boost::make_shared<crocoddyl::CostModelFramePlacement>(
@@ -128,7 +146,36 @@ boost::shared_ptr<crocoddyl::CostModelAbstract> CostModelFactory::create(CostMod
   return cost;
 }
 
-boost::shared_ptr<crocoddyl::CostModelAbstract> create_random_cost(StateModelTypes::Type state_type) {
+boost::shared_ptr<crocoddyl::CostModelAbstract> CostModelFactory::create(CostModelNoFFTypes::Type cost_type,
+                                                                         ActivationModelTypes::Type activation_type,
+                                                                         std::size_t nu) const {
+  StateModelFactory state_factory;
+  ActivationModelFactory activation_factory;
+  boost::shared_ptr<crocoddyl::CostModelAbstract> cost;
+  boost::shared_ptr<crocoddyl::StateMultibody> state = boost::static_pointer_cast<crocoddyl::StateMultibody>(
+      state_factory.create(StateModelTypes::StateMultibody_TalosArm));
+
+  boost::shared_ptr<crocoddyl::ActuationModelFull> actuation =
+      boost::make_shared<crocoddyl::ActuationModelFull>(state);
+
+  crocoddyl::FrameIndex frame_index = state->get_pinocchio()->frames.size() - 1;
+  pinocchio::SE3 frame_SE3 = pinocchio::SE3::Random();
+  if (nu == std::numeric_limits<std::size_t>::max()) {
+    nu = state->get_nv();
+  }
+  switch (cost_type) {
+    case CostModelNoFFTypes::CostModelControlGrav:
+      cost = boost::make_shared<crocoddyl::CostModelControlGrav>(
+          state, activation_factory.create(activation_type, state->get_nv()), actuation);
+      break;
+    default:
+      throw_pretty(__FILE__ ": Wrong CostModelTypes::Type given");
+      break;
+  }
+  return cost;
+}
+
+boost::shared_ptr<crocoddyl::CostModelAbstract> create_random_cost(StateModelTypes::Type state_type, std::size_t nu) {
   static bool once = true;
   if (once) {
     srand((unsigned)time(NULL));
@@ -137,7 +184,7 @@ boost::shared_ptr<crocoddyl::CostModelAbstract> create_random_cost(StateModelTyp
 
   CostModelFactory factory;
   CostModelTypes::Type rand_type = static_cast<CostModelTypes::Type>(rand() % CostModelTypes::NbCostModelTypes);
-  return factory.create(rand_type, state_type, ActivationModelTypes::ActivationModelQuad);
+  return factory.create(rand_type, state_type, ActivationModelTypes::ActivationModelQuad, nu);
 }
 
 }  // namespace unittest

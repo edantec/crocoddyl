@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh
 // Copyright (C) 2020 CTU, INRIA
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
@@ -89,8 +89,7 @@ void exposeDifferentialActionContactFwdDynamics() {
                     bp::make_function(&DifferentialActionModelContactFwdDynamics::set_armature),
                     "set an armature mechanism in the joints")
       .add_property("JMinvJt_damping",
-                    bp::make_function(&DifferentialActionModelContactFwdDynamics::get_damping_factor,
-                                      bp::return_value_policy<bp::return_by_value>()),
+                    bp::make_function(&DifferentialActionModelContactFwdDynamics::get_damping_factor),
                     bp::make_function(&DifferentialActionModelContactFwdDynamics::set_damping_factor),
                     "Damping factor for cholesky decomposition of JMinvJt");
 

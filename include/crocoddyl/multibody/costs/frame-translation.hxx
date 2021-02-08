@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@ namespace crocoddyl {
 template <typename Scalar>
 CostModelFrameTranslationTpl<Scalar>::CostModelFrameTranslationTpl(
     boost::shared_ptr<StateMultibody> state, boost::shared_ptr<ActivationModelAbstract> activation,
-    const FrameTranslation& xref, const std::size_t& nu)
+    const FrameTranslation& xref, const std::size_t nu)
     : Base(state, activation, nu), xref_(xref), pin_model_(state->get_pinocchio()) {
   if (activation_->get_nr() != 3) {
     throw_pretty("Invalid argument: "
@@ -37,7 +37,7 @@ CostModelFrameTranslationTpl<Scalar>::CostModelFrameTranslationTpl(
 
 template <typename Scalar>
 CostModelFrameTranslationTpl<Scalar>::CostModelFrameTranslationTpl(boost::shared_ptr<StateMultibody> state,
-                                                                   const FrameTranslation& xref, const std::size_t& nu)
+                                                                   const FrameTranslation& xref, const std::size_t nu)
     : Base(state, 3, nu), xref_(xref), pin_model_(state->get_pinocchio()) {}
 
 template <typename Scalar>
@@ -73,7 +73,7 @@ void CostModelFrameTranslationTpl<Scalar>::calcDiff(const boost::shared_ptr<Cost
   d->J = d->pinocchio->oMf[xref_.id].rotation() * d->fJf.template topRows<3>();
 
   // Compute the derivatives of the frame placement
-  const std::size_t& nv = state_->get_nv();
+  const std::size_t nv = state_->get_nv();
   activation_->calcDiff(d->activation, d->r);
   d->Rx.leftCols(nv) = d->J;
   d->Lx.head(nv) = d->J.transpose() * d->activation->Ar;

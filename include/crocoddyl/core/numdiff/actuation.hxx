@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, University of Edinburgh, LAAS-CNRS
+// Copyright (C) 2019-2020, University of Edinburgh, LAAS-CNRS
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -83,12 +83,12 @@ const boost::shared_ptr<ActuationModelAbstractTpl<Scalar> >& ActuationModelNumDi
 }
 
 template <typename Scalar>
-const Scalar& ActuationModelNumDiffTpl<Scalar>::get_disturbance() const {
+const Scalar ActuationModelNumDiffTpl<Scalar>::get_disturbance() const {
   return disturbance_;
 }
 
 template <typename Scalar>
-void ActuationModelNumDiffTpl<Scalar>::set_disturbance(const Scalar& disturbance) {
+void ActuationModelNumDiffTpl<Scalar>::set_disturbance(const Scalar disturbance) {
   if (disturbance < 0.) {
     throw_pretty("Invalid argument: "
                  << "Disturbance value is positive");

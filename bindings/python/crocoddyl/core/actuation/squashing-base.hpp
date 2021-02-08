@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, University of Edinburgh, IRI: CSIC-UPC
+// Copyright (C) 2019-2020, University of Edinburgh, IRI: CSIC-UPC
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@ namespace python {
 
 class SquashingModelAbstract_wrap : public SquashingModelAbstract, public bp::wrapper<SquashingModelAbstract> {
  public:
-  SquashingModelAbstract_wrap(const std::size_t& ns)
+  SquashingModelAbstract_wrap(const std::size_t ns)
       : SquashingModelAbstract(ns), bp::wrapper<SquashingModelAbstract>() {}
 
   void calc(const boost::shared_ptr<SquashingDataAbstract>& data, const Eigen::Ref<const Eigen::VectorXd>& s) {

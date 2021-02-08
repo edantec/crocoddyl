@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2018-2020, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ class CostModelCoMPositionTpl : public CostModelAbstractTpl<_Scalar> {
    */
   CostModelCoMPositionTpl(boost::shared_ptr<StateMultibody> state,
                           boost::shared_ptr<ActivationModelAbstract> activation, const Vector3s& cref,
-                          const std::size_t& nu);
+                          const std::size_t nu);
 
   /**
    * @brief Initialize the CoM position cost model
@@ -83,7 +83,7 @@ class CostModelCoMPositionTpl : public CostModelAbstractTpl<_Scalar> {
    * @param[in] cref   Reference CoM position
    * @param[in] nu     Dimension of the control vector
    */
-  CostModelCoMPositionTpl(boost::shared_ptr<StateMultibody> state, const Vector3s& cref, const std::size_t& nu);
+  CostModelCoMPositionTpl(boost::shared_ptr<StateMultibody> state, const Vector3s& cref, const std::size_t nu);
 
   /**
    * @brief Initialize the CoM position cost model
