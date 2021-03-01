@@ -133,7 +133,7 @@ class SolverDDP : public SolverAbstract {
    * Note that if the Cholesky decomposition fails, then we re-start the backward pass and increase the
    * state and control regularization values.
    */
-  virtual void computeGains(const std::size_t& t);
+  virtual void computeGains(const std::size_t t);
   
   void computeKp(const std::size_t& t, Eigen::MatrixXd& dWp, Eigen::MatrixXd& dKp);
 
