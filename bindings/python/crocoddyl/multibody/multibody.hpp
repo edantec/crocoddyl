@@ -37,6 +37,7 @@ void exposeCostState();
 void exposeCostControlGrav();
 void exposeCostControlGravContact();
 void exposeCostCoMPosition();
+void exposeCostCoMVelocity();
 void exposeCostControlGrav();
 void exposeCostControlGravContact();
 void exposeCostCentroidalMomentum();

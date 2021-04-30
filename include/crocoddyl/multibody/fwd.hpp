@@ -107,6 +107,11 @@ template <typename Scalar>
 struct CostDataCoMPositionTpl;
 
 template <typename Scalar>
+class CostModelCoMVelocityTpl;
+template <typename Scalar>
+struct CostDataCoMVelocityTpl;
+
+template <typename Scalar>
 class CostModelFramePlacementTpl;
 template <typename Scalar>
 struct CostDataFramePlacementTpl;
@@ -314,6 +319,8 @@ typedef CostModelCentroidalMomentumTpl<double> CostModelCentroidalMomentum;
 typedef CostDataCentroidalMomentumTpl<double> CostDataCentroidalMomentum;
 typedef CostModelCoMPositionTpl<double> CostModelCoMPosition;
 typedef CostDataCoMPositionTpl<double> CostDataCoMPosition;
+typedef CostModelCoMVelocityTpl<double> CostModelCoMVelocity;
+typedef CostDataCoMVelocityTpl<double> CostDataCoMVelocity;
 typedef CostModelFramePlacementTpl<double> CostModelFramePlacement;
 typedef CostDataFramePlacementTpl<double> CostDataFramePlacement;
 typedef CostModelImpulseCoMTpl<double> CostModelImpulseCoM;
