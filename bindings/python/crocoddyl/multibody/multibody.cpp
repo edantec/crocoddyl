@@ -34,6 +34,7 @@ void exposeMultibody() {
   exposeCostControlGrav();
   exposeCostControlGravContact();
   exposeCostCoMPosition();
+  exposeCostCoMVelocity();
   exposeCostControlGrav();
   exposeCostControlGravContact();
   exposeCostCentroidalMomentum();

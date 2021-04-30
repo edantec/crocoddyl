@@ -9,6 +9,7 @@
 #include "cost.hpp"
 #include "crocoddyl/core/costs/control.hpp"
 #include "crocoddyl/multibody/costs/com-position.hpp"
+#include "crocoddyl/multibody/costs/com-velocity.hpp"
 #include "crocoddyl/multibody/costs/control-gravity.hpp"
 #include "crocoddyl/multibody/costs/state.hpp"
 #include "crocoddyl/core/costs/cost-sum.hpp"
@@ -37,6 +38,9 @@ std::ostream &operator<<(std::ostream &os, CostModelTypes::Type type) {
       break;
     case CostModelTypes::CostModelCoMPosition:
       os << "CostModelCoMPosition";
+      break;
+    case CostModelTypes::CostModelCoMVelocity:
+      os << "CostModelCoMVelocity";
       break;
     //case CostModelTypes::CostModelControlGrav:
     //  os << "CostModelControlGrav";
@@ -108,6 +112,10 @@ boost::shared_ptr<crocoddyl::CostModelAbstract> CostModelFactory::create(CostMod
       break;
     case CostModelTypes::CostModelCoMPosition:
       cost = boost::make_shared<crocoddyl::CostModelCoMPosition>(state, activation_factory.create(activation_type, 3),
+                                                                 Eigen::Vector3d::Random(), nu);
+      break;
+    case CostModelTypes::CostModelCoMVelocity:
+      cost = boost::make_shared<crocoddyl::CostModelCoMVelocity>(state, activation_factory.create(activation_type, 3),
                                                                  Eigen::Vector3d::Random(), nu);
       break;
     //case CostModelTypes::CostModelControlGrav:
