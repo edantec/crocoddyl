@@ -37,6 +37,7 @@ void exposeCore() {
   exposeActionLQR();
   exposeDifferentialActionLQR();
   exposeActivationQuad();
+  exposeActivationQuadRef();
   exposeActivationQuadFlatExp();
   exposeActivationQuadFlatLog();
   exposeActivationNorm2Barrier();
