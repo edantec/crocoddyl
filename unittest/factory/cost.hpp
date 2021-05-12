@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2019-2021, LAAS-CNRS, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -21,16 +21,14 @@ namespace unittest {
 
 struct CostModelTypes {
   enum Type {
-    CostModelState,
-    CostModelControl,
-    CostModelCoMPosition,
-    CostModelCoMVelocity,
-    //CostModelControlGrav,
-    // CostModelCentroidalMomentum,  // @todo Figure out the pinocchio callbacks.
-    CostModelFramePlacement,
-    CostModelFrameRotation,
-    CostModelFrameTranslation,
-    CostModelFrameVelocity,
+    CostModelResidualState,
+    CostModelResidualControl,
+    CostModelResidualCoMPosition,
+    // CostModelResidualCentroidalMomentum,  // @todo Figure out the pinocchio callbacks.
+    CostModelResidualFramePlacement,
+    CostModelResidualFrameRotation,
+    CostModelResidualFrameTranslation,
+    CostModelResidualFrameVelocity,
     NbCostModelTypes
   };
   static std::vector<Type> init_all() {
@@ -45,7 +43,7 @@ struct CostModelTypes {
 };
 
 struct CostModelNoFFTypes {
-  enum Type { CostModelControlGrav, NbCostModelNoFFTypes };
+  enum Type { CostModelResidualControlGrav, NbCostModelNoFFTypes };
   static std::vector<Type> init_all() {
     std::vector<Type> v;
     v.clear();
@@ -57,8 +55,8 @@ struct CostModelNoFFTypes {
   static const std::vector<Type> all;
 };
 
-std::ostream &operator<<(std::ostream &os, CostModelTypes::Type type);
-std::ostream &operator<<(std::ostream &os, CostModelNoFFTypes::Type type);
+std::ostream& operator<<(std::ostream& os, CostModelTypes::Type type);
+std::ostream& operator<<(std::ostream& os, CostModelNoFFTypes::Type type);
 
 class CostModelFactory {
  public:
@@ -80,7 +78,6 @@ class CostModelFactory {
 
 boost::shared_ptr<crocoddyl::CostModelAbstract> create_random_cost(
     StateModelTypes::Type state_type, std::size_t nu = std::numeric_limits<std::size_t>::max());
-
 }  // namespace unittest
 }  // namespace crocoddyl
 

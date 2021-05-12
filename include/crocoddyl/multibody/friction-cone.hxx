@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2019-2021, University of Edinburgh
+// Copyright (C) 2019-2021, University of Edinburgh, University of Oxford
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ FrictionConeTpl<Scalar>::FrictionConeTpl()
       mu_(Scalar(0.7)),
       inner_appr_(true),
       min_nforce_(Scalar(0.)),
-      max_nforce_(std::numeric_limits<Scalar>::max()) {
+      max_nforce_(std::numeric_limits<Scalar>::infinity()) {
   A_.setZero();
   ub_.setZero();
   lb_.setZero();
@@ -47,8 +47,8 @@ FrictionConeTpl<Scalar>::FrictionConeTpl(const Matrix3s& R, const Scalar mu, std
     std::cerr << "Warning: min_nforce has to be a positive value, set to 0" << std::endl;
   }
   if (max_nforce < Scalar(0.)) {
-    max_nforce_ = std::numeric_limits<Scalar>::max();
-    std::cerr << "Warning: max_nforce has to be a positive value, set to maximum value" << std::endl;
+    max_nforce_ = std::numeric_limits<Scalar>::infinity();
+    std::cerr << "Warning: max_nforce has to be a positive value, set to infinity value" << std::endl;
   }
   A_ = MatrixX3s::Zero(nf_ + 1, 3);
   ub_ = VectorXs::Zero(nf_ + 1);
@@ -85,8 +85,8 @@ FrictionConeTpl<Scalar>::FrictionConeTpl(const Vector3s& nsurf, const Scalar mu,
     std::cerr << "Warning: min_nforce has to be a positive value, set to 0" << std::endl;
   }
   if (max_nforce < Scalar(0.)) {
-    max_nforce_ = std::numeric_limits<Scalar>::max();
-    std::cerr << "Warning: max_nforce has to be a positive value, set to maximum value" << std::endl;
+    max_nforce_ = std::numeric_limits<Scalar>::infinity();
+    std::cerr << "Warning: max_nforce has to be a positive value, set to infinity value" << std::endl;
   }
   A_ = MatrixX3s::Zero(nf_ + 1, 3);
   ub_ = VectorXs::Zero(nf_ + 1);
@@ -118,7 +118,7 @@ void FrictionConeTpl<Scalar>::update() {
   A_.setZero();
   ub_.setZero();
   lb_.setOnes();
-  lb_ *= -std::numeric_limits<Scalar>::max();
+  lb_ *= -std::numeric_limits<Scalar>::infinity();
 
   // Compute the mu given the type of friction cone approximation
   Scalar mu = mu_;
@@ -258,10 +258,26 @@ void FrictionConeTpl<Scalar>::set_min_nforce(const Scalar min_nforce) {
 template <typename Scalar>
 void FrictionConeTpl<Scalar>::set_max_nforce(const Scalar max_nforce) {
   if (max_nforce < Scalar(0.)) {
-    max_nforce_ = std::numeric_limits<Scalar>::max();
-    std::cerr << "Warning: max_nforce has to be a positive value, set to maximum value" << std::endl;
+    max_nforce_ = std::numeric_limits<Scalar>::infinity();
+    std::cerr << "Warning: max_nforce has to be a positive value, set to infinity value" << std::endl;
   }
   max_nforce_ = max_nforce;
+}
+
+template <typename Scalar>
+FrictionConeTpl<Scalar>& FrictionConeTpl<Scalar>::operator=(const FrictionConeTpl<Scalar>& other) {
+  if (this != &other) {
+    nf_ = other.get_nf();
+    A_ = other.get_A();
+    ub_ = other.get_ub();
+    lb_ = other.get_lb();
+    R_ = other.get_R();
+    mu_ = other.get_mu();
+    inner_appr_ = other.get_inner_appr();
+    min_nforce_ = other.get_min_nforce();
+    max_nforce_ = other.get_max_nforce();
+  }
+  return *this;
 }
 
 template <typename Scalar>

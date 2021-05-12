@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2020-2021, University of Edinburgh
+// Copyright (C) 2020-2021, University of Edinburgh, University of Oxford
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -57,14 +57,15 @@ class WrenchConeTpl {
    * @param[in] nf          Number of facets (default 4)
    * @param[in] inner_appr  Label that describes the type of friction cone approximation (inner/outer)
    * @param[in] min_nforce  Minimum normal force (default 0.)
-   * @param[in] max_nforce  Maximum normal force (default maximum floating number))
+   * @param[in] max_nforce  Maximum normal force (default inf number))
    */
   WrenchConeTpl(const Matrix3s& R, const Scalar mu, const Vector2s& box, const std::size_t nf = 4,
                 const bool inner_appr = true, const Scalar min_nforce = Scalar(0.),
-                const Scalar max_nforce = std::numeric_limits<Scalar>::max());
+                const Scalar max_nforce = std::numeric_limits<Scalar>::infinity());
   DEPRECATED("Use constructor that includes inner_appr",
              WrenchConeTpl(const Matrix3s& R, const Scalar mu, const Vector2s& box, std::size_t nf,
-                           const Scalar min_nforce, const Scalar max_nforce = std::numeric_limits<Scalar>::max());)
+                           const Scalar min_nforce,
+                           const Scalar max_nforce = std::numeric_limits<Scalar>::infinity());)
 
   /**
    * @brief Initialize the wrench cone
@@ -86,7 +87,7 @@ class WrenchConeTpl {
   void update();
   DEPRECATED("Use update().",
              void update(const Matrix3s& R, const Scalar mu, const Vector2s& box, const Scalar min_nforce = Scalar(0.),
-                         const Scalar max_nforce = std::numeric_limits<Scalar>::max()));
+                         const Scalar max_nforce = std::numeric_limits<Scalar>::infinity()));
 
   /**
    * @brief Return the matrix of wrench cone
@@ -179,6 +180,8 @@ class WrenchConeTpl {
    * Note that you need to run `update` for updating the inequality matrix and bounds.
    */
   void set_max_nforce(const Scalar max_nforce);
+
+  WrenchConeTpl<Scalar>& operator=(const WrenchConeTpl<Scalar>& other);
 
   template <class Scalar>
   friend std::ostream& operator<<(std::ostream& os, const WrenchConeTpl<Scalar>& X);

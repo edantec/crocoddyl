@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2021, University of Edinburgh
+// Copyright (C) 2021, University of Edinburgh, University of Oxford
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -32,10 +32,10 @@ void test_constructor() {
   // Create the wrench cone
   crocoddyl::WrenchCone cone(R, mu, box, nf, inner_appr);
 
-  BOOST_CHECK((cone.get_R() - R).isMuchSmallerThan(1.0, 1e-9));
+  BOOST_CHECK(cone.get_R().isApprox(R));
   BOOST_CHECK(cone.get_mu() == mu);
   BOOST_CHECK(cone.get_nf() == nf);
-  BOOST_CHECK((cone.get_box() - box).isMuchSmallerThan(1.0, 1e-9));
+  BOOST_CHECK(cone.get_box().isApprox(box));
   BOOST_CHECK(cone.get_inner_appr() == inner_appr);
   BOOST_CHECK(static_cast<std::size_t>(cone.get_A().rows()) == nf + 13);
   BOOST_CHECK(static_cast<std::size_t>(cone.get_lb().size()) == nf + 13);
@@ -49,14 +49,51 @@ void test_constructor() {
   // Create the wrench cone
   cone = crocoddyl::WrenchCone(R, mu, box, nf, inner_appr);
 
-  BOOST_CHECK((cone.get_R() - R).isMuchSmallerThan(1.0, 1e-9));
+  BOOST_CHECK(cone.get_R().isApprox(R));
   BOOST_CHECK(cone.get_mu() == mu);
   BOOST_CHECK(cone.get_nf() == nf);
-  BOOST_CHECK((cone.get_box() - box).isMuchSmallerThan(1.0, 1e-9));
+  BOOST_CHECK(cone.get_box().isApprox(box));
   BOOST_CHECK(cone.get_inner_appr() == inner_appr);
   BOOST_CHECK(static_cast<std::size_t>(cone.get_A().rows()) == nf + 13);
   BOOST_CHECK(static_cast<std::size_t>(cone.get_lb().size()) == nf + 13);
   BOOST_CHECK(static_cast<std::size_t>(cone.get_ub().size()) == nf + 13);
+
+  // Create the wrench cone from a reference
+  {
+    crocoddyl::WrenchCone cone_reference(cone);
+
+    BOOST_CHECK(cone.get_nf() == cone_reference.get_nf());
+    BOOST_CHECK(cone.get_A().isApprox(cone_reference.get_A()));
+    for (std::size_t i = 0; i < static_cast<std::size_t>(cone.get_ub().size()); ++i) {
+      BOOST_CHECK(cone.get_ub()[i] == cone_reference.get_ub()[i]);
+      BOOST_CHECK(cone.get_lb()[i] == cone_reference.get_lb()[i]);
+    }
+    BOOST_CHECK(cone.get_R().isApprox(cone_reference.get_R()));
+    BOOST_CHECK(cone.get_box().isApprox(cone_reference.get_box()));
+    BOOST_CHECK(std::abs(cone.get_mu() - cone_reference.get_mu()) < 1e-9);
+    BOOST_CHECK(cone.get_inner_appr() == cone_reference.get_inner_appr());
+    BOOST_CHECK(std::abs(cone.get_min_nforce() - cone_reference.get_min_nforce()) < 1e-9);
+    BOOST_CHECK(cone.get_max_nforce() == cone_reference.get_max_nforce());
+  }
+
+  // Create the wrench cone through the copy operator
+  {
+    crocoddyl::WrenchCone cone_copy;
+    cone_copy = cone;
+
+    BOOST_CHECK(cone.get_nf() == cone_copy.get_nf());
+    BOOST_CHECK(cone.get_A().isApprox(cone_copy.get_A()));
+    for (std::size_t i = 0; i < static_cast<std::size_t>(cone.get_ub().size()); ++i) {
+      BOOST_CHECK(cone.get_ub()[i] == cone_copy.get_ub()[i]);
+      BOOST_CHECK(cone.get_lb()[i] == cone_copy.get_lb()[i]);
+    }
+    BOOST_CHECK(cone.get_R().isApprox(cone_copy.get_R()));
+    BOOST_CHECK(cone.get_box().isApprox(cone_copy.get_box()));
+    BOOST_CHECK(std::abs(cone.get_mu() - cone_copy.get_mu()) < 1e-9);
+    BOOST_CHECK(cone.get_inner_appr() == cone_copy.get_inner_appr());
+    BOOST_CHECK(std::abs(cone.get_min_nforce() - cone_copy.get_min_nforce()) < 1e-9);
+    BOOST_CHECK(cone.get_max_nforce() == cone_copy.get_max_nforce());
+  }
 }
 
 void test_against_friction_cone() {
@@ -73,14 +110,18 @@ void test_against_friction_cone() {
   crocoddyl::WrenchCone wrench_cone(R, mu, box, nf, inner_appr, 0., 100.);
   crocoddyl::FrictionCone friction_cone(R, mu, nf, inner_appr, 0., 100.);
 
-  BOOST_CHECK((wrench_cone.get_R() - friction_cone.get_R()).isMuchSmallerThan(1.0, 1e-9));
+  BOOST_CHECK((wrench_cone.get_R() - friction_cone.get_R()).isZero(1e-9));
   BOOST_CHECK(wrench_cone.get_mu() == friction_cone.get_mu());
   BOOST_CHECK(wrench_cone.get_nf() == friction_cone.get_nf());
   for (std::size_t i = 0; i < nf + 1; ++i) {
-    BOOST_CHECK((wrench_cone.get_A().row(i).head(3) - friction_cone.get_A().row(i)).isMuchSmallerThan(1.0, 1e-9));
+    for (std::size_t j = 0; j < 3; ++j) {
+      BOOST_CHECK(wrench_cone.get_A().row(i)[j] == friction_cone.get_A().row(i)[j]);
+    }
   }
-  BOOST_CHECK((wrench_cone.get_lb().head(nf + 1) - friction_cone.get_lb()).isMuchSmallerThan(1.0, 1e-9));
-  BOOST_CHECK((wrench_cone.get_ub().head(nf + 1) - friction_cone.get_ub()).isMuchSmallerThan(1.0, 1e-9));
+  for (std::size_t i = 0; i < nf + 1; ++i) {
+    BOOST_CHECK(wrench_cone.get_ub()[i] == friction_cone.get_ub()[i]);
+    BOOST_CHECK(wrench_cone.get_lb()[i] == friction_cone.get_lb()[i]);
+  }
 }
 
 void test_against_cop_support() {
@@ -97,12 +138,16 @@ void test_against_cop_support() {
   crocoddyl::WrenchCone wrench_cone(R, mu, box, nf, inner_appr, 0., 100.);
   crocoddyl::CoPSupport cop_support(R, box);
 
-  BOOST_CHECK((wrench_cone.get_R() - cop_support.get_R()).isMuchSmallerThan(1.0, 1e-9));
+  BOOST_CHECK((wrench_cone.get_R() - cop_support.get_R()).isZero(1e-9));
   for (std::size_t i = 0; i < 4; ++i) {
-    BOOST_CHECK((wrench_cone.get_A().row(nf + i + 1) - cop_support.get_A().row(i)).isMuchSmallerThan(1.0, 1e-9));
+    for (std::size_t j = 0; j < 6; ++j) {
+      BOOST_CHECK(wrench_cone.get_A().row(nf + i + 1)[j] == cop_support.get_A().row(i)[j]);
+    }
   }
-  BOOST_CHECK((wrench_cone.get_lb().segment(nf + 1, 4) - cop_support.get_lb()).isMuchSmallerThan(1.0, 1e-9));
-  BOOST_CHECK((wrench_cone.get_ub().segment(nf + 1, 4) - cop_support.get_ub()).isMuchSmallerThan(1.0, 1e-9));
+  for (std::size_t i = 0; i < 4; ++i) {
+    BOOST_CHECK(wrench_cone.get_ub()[i + nf + 1] == cop_support.get_ub()[i]);
+    BOOST_CHECK(wrench_cone.get_lb()[i + nf + 1] == cop_support.get_lb()[i]);
+  }
 }
 
 void test_force_along_wrench_cone_normal() {
