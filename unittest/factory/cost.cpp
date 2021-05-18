@@ -10,6 +10,7 @@
 #include "crocoddyl/core/costs/residual.hpp"
 #include "crocoddyl/core/residuals/control.hpp"
 #include "crocoddyl/multibody/residuals/com-position.hpp"
+#include "crocoddyl/multibody/residuals/com-velocity.hpp"
 #include "crocoddyl/multibody/residuals/control-gravity.hpp"
 #include "crocoddyl/multibody/residuals/state.hpp"
 // #include "crocoddyl/multibody/residuals/centroidal-momentum.hpp"
@@ -38,6 +39,9 @@ std::ostream& operator<<(std::ostream& os, CostModelTypes::Type type) {
       break;
     case CostModelTypes::CostModelResidualCoMPosition:
       os << "CostModelResidualCoMPosition";
+      break;
+    case CostModelTypes::CostModelResidualCoMVelocity:
+      os << "CostModelResidualCoMVelocity";
       break;
     // case CostModelTypes::CostModelResidualCentroidalMomentum:
     //   os << "CostModelResidualCentroidalMomentum";
@@ -110,6 +114,11 @@ boost::shared_ptr<crocoddyl::CostModelAbstract> CostModelFactory::create(CostMod
       cost = boost::make_shared<crocoddyl::CostModelResidual>(
           state, activation_factory.create(activation_type, 3),
           boost::make_shared<crocoddyl::ResidualModelCoMPosition>(state, Eigen::Vector3d::Random(), nu));
+      break;
+    case CostModelTypes::CostModelResidualCoMVelocity:
+      cost = boost::make_shared<crocoddyl::CostModelResidual>(
+          state, activation_factory.create(activation_type, 3),
+          boost::make_shared<crocoddyl::ResidualModelCoMVelocity>(state, Eigen::Vector3d::Random(), nu));
       break;
     // case CostModelTypes::CostModelResidualCentroidalMomentum:
     //   cost = boost::make_shared<crocoddyl::CostModelResidual>(

@@ -10,6 +10,7 @@
 #include "crocoddyl/multibody/residuals/state.hpp"
 #include "crocoddyl/core/residuals/control.hpp"
 #include "crocoddyl/multibody/residuals/com-position.hpp"
+#include "crocoddyl/multibody/residuals/com-velocity.hpp"
 // #include "crocoddyl/multibody/residuals/centroidal-momentum.hpp"
 #include "crocoddyl/multibody/residuals/frame-placement.hpp"
 #include "crocoddyl/multibody/residuals/frame-rotation.hpp"
@@ -33,6 +34,9 @@ std::ostream& operator<<(std::ostream& os, ResidualModelTypes::Type type) {
       break;
     case ResidualModelTypes::ResidualModelCoMPosition:
       os << "ResidualModelCoMPosition";
+      break;
+    case ResidualModelTypes::ResidualModelCoMVelocity:
+      os << "ResidualModelCoMVelocity";
       break;
     // case ResidualModelTypes::ResidualModelCentroidalMomentum:
     //   os << "ResidualModelCentroidalMomentum";
@@ -84,6 +88,9 @@ boost::shared_ptr<crocoddyl::ResidualModelAbstract> ResidualModelFactory::create
       break;
     case ResidualModelTypes::ResidualModelCoMPosition:
       residual = boost::make_shared<crocoddyl::ResidualModelCoMPosition>(state, Eigen::Vector3d::Random(), nu);
+      break;
+    case ResidualModelTypes::ResidualModelCoMVelocity:
+      residual = boost::make_shared<crocoddyl::ResidualModelCoMVelocity>(state, Eigen::Vector3d::Random(), nu);
       break;
     // case ResidualModelTypes::ResidualModelCentroidalMomentum:
     //   residual = boost::make_shared<crocoddyl::ResidualModelCentroidalMomentum>(state_, Vector6d::Random(), nu);

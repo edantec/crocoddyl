@@ -24,6 +24,7 @@ struct CostModelTypes {
     CostModelResidualState,
     CostModelResidualControl,
     CostModelResidualCoMPosition,
+    CostModelResidualCoMVelocity,
     // CostModelResidualCentroidalMomentum,  // @todo Figure out the pinocchio callbacks.
     CostModelResidualFramePlacement,
     CostModelResidualFrameRotation,

@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2021, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2021, LAAS-CNRS, University of Edinburgh, INRIA
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -13,8 +13,14 @@
 namespace crocoddyl {
 namespace python {
 
-void exposeCostCoMVelocity() {
-  bp::class_<CostModelCoMVelocity, bp::bases<CostModelAbstract> >(
+void exposeCostCoMVelocity() {  // TODO: Remove once the deprecated update call has been removed in a future
+                                // release
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
+  bp::register_ptr_to_python<boost::shared_ptr<CostModelCoMVelocity> >();
+
+  bp::class_<CostModelCoMVelocity, bp::bases<CostModelResidual> >(
       "CostModelCoMVelocity",
       "This cost function defines a residual vector as r = v - vref, with v and vref as the current and reference "
       "CoM velocity, respetively.",
@@ -23,7 +29,7 @@ void exposeCostCoMVelocity() {
           "Initialize the CoM velocity cost model.\n\n"
           ":param state: state of the multibody system\n"
           ":param activation: activation model\n"
-          ":param cref: reference CoM velocity\n"
+          ":param vref: reference CoM velocity\n"
           ":param nu: dimension of control vector"))
       .def(bp::init<boost::shared_ptr<StateMultibody>, boost::shared_ptr<ActivationModelAbstract>, Eigen::Vector3d>(
           bp::args("self", "state", "activation", "vref"),
@@ -46,36 +52,6 @@ void exposeCostCoMVelocity() {
           "state.nv.\n"
           ":param state: state of the multibody system\n"
           ":param vref: reference CoM velocity"))
-      .def<void (CostModelCoMVelocity::*)(const boost::shared_ptr<CostDataAbstract>&,
-                                          const Eigen::Ref<const Eigen::VectorXd>&,
-                                          const Eigen::Ref<const Eigen::VectorXd>&)>(
-          "calc", &CostModelCoMVelocity::calc, bp::args("self", "data", "x", "u"),
-          "Compute the CoM velocity cost.\n\n"
-          ":param data: cost data\n"
-          ":param x: time-discrete state vector\n"
-          ":param u: time-discrete control input")
-      .def<void (CostModelCoMVelocity::*)(const boost::shared_ptr<CostDataAbstract>&,
-                                          const Eigen::Ref<const Eigen::VectorXd>&)>("calc", &CostModelAbstract::calc,
-                                                                                     bp::args("self", "data", "x"))
-      .def<void (CostModelCoMVelocity::*)(const boost::shared_ptr<CostDataAbstract>&,
-                                          const Eigen::Ref<const Eigen::VectorXd>&,
-                                          const Eigen::Ref<const Eigen::VectorXd>&)>(
-          "calcDiff", &CostModelCoMVelocity::calcDiff, bp::args("self", "data", "x", "u"),
-          "Compute the derivatives of the CoM velocity cost.\n\n"
-          "It assumes that calc has been run first.\n"
-          ":param data: action data\n"
-          ":param x: time-discrete state vector\n"
-          ":param u: time-discrete control input\n")
-      .def<void (CostModelCoMVelocity::*)(const boost::shared_ptr<CostDataAbstract>&,
-                                          const Eigen::Ref<const Eigen::VectorXd>&)>(
-          "calcDiff", &CostModelAbstract::calcDiff, bp::args("self", "data", "x"))
-      .def("createData", &CostModelCoMVelocity::createData, bp::with_custodian_and_ward_postcall<0, 2>(),
-           bp::args("self", "data"),
-           "Create the CoM velocity cost data.\n\n"
-           "Each cost model has its own data that needs to be allocated. This function\n"
-           "returns the allocated data for a predefined cost.\n"
-           ":param data: shared data\n"
-           ":return cost data.")
       .add_property("reference", &CostModelCoMVelocity::get_reference<Eigen::Vector3d>,
                     &CostModelCoMVelocity::set_reference<Eigen::Vector3d>, "reference CoM velocity")
       .add_property("vref",
@@ -84,6 +60,8 @@ void exposeCostCoMVelocity() {
                     bp::make_function(&CostModelCoMVelocity::set_reference<Eigen::Vector3d>,
                                       deprecated<>("Deprecated. Use reference.")),
                     "reference CoM velocity");
+
+#pragma GCC diagnostic pop
 }
 
 }  // namespace python

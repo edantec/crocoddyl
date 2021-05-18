@@ -34,6 +34,7 @@ void exposeMultibody() {
   exposeResidualState();
   exposeResidualCentroidalMomentum();
   exposeResidualCoMPosition();
+  exposeResidualCoMVelocity();
   exposeResidualContactForce();
   exposeResidualContactFrictionCone();
   exposeResidualContactCoPPosition();
@@ -67,7 +68,6 @@ void exposeMultibody() {
   exposeCostImpulseWrenchCone();
   exposeCostImpulseCoPPosition();
   exposeContact2D();
-  exposeCostPairCollisions();
   exposeContact3D();
   exposeContact6D();
   exposeImpulse3D();

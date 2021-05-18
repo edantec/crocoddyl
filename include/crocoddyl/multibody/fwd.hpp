@@ -99,6 +99,11 @@ template <typename Scalar>
 struct ResidualDataCoMPositionTpl;
 
 template <typename Scalar>
+class ResidualModelCoMVelocityTpl;
+template <typename Scalar>
+struct ResidualDataCoMVelocityTpl;
+
+template <typename Scalar>
 class ResidualModelContactForceTpl;
 template <typename Scalar>
 struct ResidualDataContactForceTpl;
@@ -158,22 +163,17 @@ class ResidualModelStateTpl;
 template <typename Scalar>
 struct ResidualDataStateTpl;
 
+template <typename Scalar>
+class ResidualModelPairCollisionsTpl;
+template <typename Scalar>
+struct ResidualDataPairCollisionsTpl;
+
 // cost
 template <typename Scalar>
 class CostModelFrameTranslationTpl;
 
 template <typename Scalar>
 using CostDataFrameTranslationTpl = CostDataResidualTpl<Scalar>;
-
-template <typename Scalar>
-class CostModelControlGravTpl;
-template <typename Scalar>
-struct CostDataControlGravTpl;
-
-template <typename Scalar>
-class CostModelControlGravContactTpl;
-template <typename Scalar>
-struct CostDataControlGravContactTpl;
 
 template <typename Scalar>
 class CostModelCentroidalMomentumTpl;
@@ -188,7 +188,7 @@ using CostDataCoMPositionTpl = CostDataResidualTpl<Scalar>;
 template <typename Scalar>
 class CostModelCoMVelocityTpl;
 template <typename Scalar>
-struct CostDataCoMVelocityTpl;
+using CostDataCoMVelocityTpl = CostDataResidualTpl<Scalar>;
 
 template <typename Scalar>
 class CostModelFramePlacementTpl;
@@ -264,11 +264,6 @@ template <typename Scalar>
 class CostModelImpulseCoPPositionTpl;
 template <typename Scalar>
 using CostDataImpulseCoPPositionTpl = CostDataResidualTpl<Scalar>;
-
-template <typename Scalar>
-class CostModelPairCollisionsTpl;
-template <typename Scalar>
-struct CostDataPairCollisionsTpl;
 
 // impulse
 template <typename Scalar>
@@ -394,6 +389,8 @@ typedef ResidualModelCentroidalMomentumTpl<double> ResidualModelCentroidalMoment
 typedef ResidualDataCentroidalMomentumTpl<double> ResidualDataCentroidalMomentum;
 typedef ResidualModelCoMPositionTpl<double> ResidualModelCoMPosition;
 typedef ResidualDataCoMPositionTpl<double> ResidualDataCoMPosition;
+typedef ResidualModelCoMVelocityTpl<double> ResidualModelCoMVelocity;
+typedef ResidualDataCoMVelocityTpl<double> ResidualDataCoMVelocity;
 typedef ResidualModelContactForceTpl<double> ResidualModelContactForce;
 typedef ResidualDataContactForceTpl<double> ResidualDataContactForce;
 typedef ResidualModelContactFrictionConeTpl<double> ResidualModelContactFrictionCone;
@@ -428,6 +425,9 @@ DEPRECATED("Use ResidualDataCentroidalMomentum", typedef CostDataResidualTpl<dou
 DEPRECATED("Use ResidualModelCoMPosition with CostModelResidual",
            typedef CostModelCoMPositionTpl<double> CostModelCoMPosition;)
 DEPRECATED("Use ResidualDataCoMPosition", typedef CostDataResidualTpl<double> CostDataCoMPosition;)
+DEPRECATED("Use ResidualModelCoMVelocity with CostModelResidual",
+           typedef CostModelCoMVelocityTpl<double> CostModelCoMVelocity;)
+DEPRECATED("Use ResidualDataCoMVelocity", typedef CostDataResidualTpl<double> CostDataCoMVelocity;)
 DEPRECATED("Use ResidualModelFramePlacement with CostModelResidual",
            typedef CostModelFramePlacementTpl<double> CostModelFramePlacement;)
 DEPRECATED("Use ResidualDataFramePlacement", typedef CostDataResidualTpl<double> CostDataFramePlacement;)
