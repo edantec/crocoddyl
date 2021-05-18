@@ -58,7 +58,7 @@ void exposeResidualPairCollisions() {
            "Each residual model has its own data that needs to be allocated. This function\n"
            "returns the allocated data for a predefined residual.\n"
            ":param data: shared data\n"
-           ":return residual data.")
+           ":return residual data.");
 
   bp::register_ptr_to_python<boost::shared_ptr<ResidualDataPairCollisions> >();
 

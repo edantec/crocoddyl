@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2021, University of Edinburgh
+// Copyright (C) 2020-2021, LAAS-CNRS, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,23 +17,24 @@ ResidualModelPairCollisionsTpl<Scalar>::ResidualModelPairCollisionsTpl(boost::sh
                                                          boost::shared_ptr<GeometryModel> geom_model,
                                                          const pinocchio::PairIndex& pair_id,
                                                          const pinocchio::JointIndex& joint_id)
-    : Base(state, 1, nu, true, false, false), geom_model_(geom_model), pin_model_(state->get_pinocchio(), pair_id_(pair_id), joint_id_(joint_id) 
+    : Base(state, 1, nu, true, false, false), geom_model_(geom_model), pin_model_(*state->get_pinocchio()), pair_id_(pair_id), joint_id_(joint_id) 
 {}
 
 template <typename Scalar>
 ResidualModelPairCollisionsTpl<Scalar>::~ResidualModelPairCollisionsTpl() {}
 
 template <typename Scalar>
-void ResidualModelPairCollisionsTpl<Scalar>::calc(const boost::shared_ptr<ResidualDataAbstract>& data,
-                                              const Eigen::Ref<const VectorXs>& x, const Eigen::Ref<const VectorXs>&) {
+void ResidualModelPairCollisionsTpl<Scalar>::calc(const boost::shared_ptr<ResidualDataAbstract> &data,
+                                               const Eigen::Ref<const VectorXs> &x,
+                                               const Eigen::Ref<const VectorXs> &) {
   Data* d  = static_cast<Data*>(data.get());
 
-  const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(s->get_nq());
+  const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
 
   // This function calls forwardKinematics on the whole body
   // and computes the distances for each and every pair
   // We need to find a way to only recompute what is needed
-  pinocchio::computeDistances(*pin_model_.get(), *d->pinocchio, *geom_model_.get(), d->geom_data, q);
+  pinocchio::computeDistances(pin_model_, *d->pinocchio, *geom_model_.get(), d->geom_data, q);
 
   //calculate residual
   data->r = d->geom_data.distanceResults[pair_id_].nearest_points[0] -
@@ -41,12 +42,11 @@ void ResidualModelPairCollisionsTpl<Scalar>::calc(const boost::shared_ptr<Residu
 }
 
 template <typename Scalar>
-void ResidualModelPairCollisionsTpl<Scalar>::calcDiff(const boost::shared_ptr<ResidualDataAbstract>& data,
-                                               const Eigen::Ref<const VectorXs>& x, const Eigen::Ref<const VectorXs>&) {
-
+void ResidualModelPairCollisionsTpl<Scalar>::calcDiff(const boost::shared_ptr<ResidualDataAbstract> &data,
+                                                   const Eigen::Ref<const VectorXs> &x,
+                                                   const Eigen::Ref<const VectorXs> &) {
   Data* d  = static_cast<Data*>(data.get());
   
-  const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(s->get_nq());
   const std::size_t& nv = state_->get_nv();
   //pinocchio::updateFramePlacement(pin_model, *d->pinocchio, Mref_.id);
   //pinocchio::updateFramePlacements(pin_model, *d->pinocchio);
@@ -59,7 +59,7 @@ void ResidualModelPairCollisionsTpl<Scalar>::calcDiff(const boost::shared_ptr<Re
   // Calculate the vector from the joint jointId to the collision p1, expressed in world frame
   const Vector3s p1_local_world = d->geom_data.distanceResults[pair_id_].nearest_points[0] - oMi.translation();
   d->J.setZero();
-  pinocchio::getJointJacobian(*pin_model_.get(), *d->pinocchio, joint_id_,
+  pinocchio::getJointJacobian(pin_model_, *d->pinocchio, joint_id_,
                               pinocchio::LOCAL_WORLD_ALIGNED, d->J);
   
   // Calculate the Jacobian at p1
@@ -72,8 +72,13 @@ void ResidualModelPairCollisionsTpl<Scalar>::calcDiff(const boost::shared_ptr<Re
 
 template <typename Scalar>
 boost::shared_ptr<ResidualDataAbstractTpl<Scalar> > ResidualModelPairCollisionsTpl<Scalar>::createData(
-    DataCollectorAbstract* const data) {
+    DataCollectorAbstract *const data) {
   return boost::allocate_shared<Data>(Eigen::aligned_allocator<Data>(), this, data);
+}
+
+template <typename Scalar>
+const pinocchio::GeometryModel& ResidualModelPairCollisionsTpl<Scalar>::get_geometryModel() const {
+  return *geom_model_.get();
 }
 
 }  // namespace crocoddyl
