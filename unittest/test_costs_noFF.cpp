@@ -3,7 +3,7 @@
 //
 // Copyright (C) 2019-2021, LAAS-CNRS, New York University,
 //                          Max Planck Gesellschaft, University of Edinburgh,
-//                           INRIA
+//                          INRIA
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "crocoddyl/multibody/data/multibody.hpp"
 
 #include "factory/cost.hpp"
+#include "factory/actuation.hpp"
 #include "unittest_common.hpp"
 
 using namespace boost::unit_test;
@@ -104,9 +105,9 @@ void test_partial_derivatives_against_numdiff(CostModelNoFFTypes::Type cost_type
   pinocchio::Model& pinocchio_model = *state->get_pinocchio().get();
   pinocchio::Data pinocchio_data(pinocchio_model);
 
-  boost::shared_ptr<crocoddyl::ActuationModelAbstract> actuation =
+  boost::shared_ptr<crocoddyl::ActuationModelAbstract> actuation_model =
       boost::make_shared<crocoddyl::ActuationModelFull>(state);
-  const boost::shared_ptr<crocoddyl::ActuationDataAbstract>& actuation_data = actuation->createData();
+  const boost::shared_ptr<crocoddyl::ActuationDataAbstract>& actuation_data = actuation_model->createData();
   crocoddyl::DataCollectorActMultibody shared_data(&pinocchio_data, actuation_data);
   const boost::shared_ptr<crocoddyl::CostDataAbstract>& data = model->createData(&shared_data);
 
@@ -123,10 +124,13 @@ void test_partial_derivatives_against_numdiff(CostModelNoFFTypes::Type cost_type
 
   // set the function that needs to be called at every step of the numdiff
   std::vector<crocoddyl::CostModelNumDiff::ReevaluationFunction> reevals;
-  reevals.push_back(boost::bind(&crocoddyl::unittest::updateAllPinocchio, &pinocchio_model, &pinocchio_data, _1));
+  reevals.push_back(boost::bind(&crocoddyl::unittest::updateAllPinocchio, &pinocchio_model, &pinocchio_data, _1, _2));
+  reevals.push_back(boost::bind(&crocoddyl::unittest::updateActuation, actuation_model, actuation_data, _1, _2));
   model_num_diff.set_reevals(reevals);
 
   // Computing the cost derivatives
+  actuation_model->calc(actuation_data, x, u);
+  actuation_model->calcDiff(actuation_data, x, u);
   model->calc(data, x, u);
   model->calcDiff(data, x, u);
 
@@ -135,19 +139,18 @@ void test_partial_derivatives_against_numdiff(CostModelNoFFTypes::Type cost_type
   model_num_diff.calcDiff(data_num_diff, x, u);
 
   // Checking the partial derivatives against NumDiff
-  double tol = NUMDIFF_MODIFIER * model_num_diff.get_disturbance();
-
-  BOOST_CHECK((data->Lx - data_num_diff->Lx).isMuchSmallerThan(1.0, tol));
-  BOOST_CHECK((data->Lu - data_num_diff->Lu).isMuchSmallerThan(1.0, tol));
+  double tol = sqrt(model_num_diff.get_disturbance());
+  BOOST_CHECK((data->Lx - data_num_diff->Lx).isZero(tol));
+  BOOST_CHECK((data->Lu - data_num_diff->Lu).isZero(tol));
   if (model_num_diff.get_with_gauss_approx()) {
     // The num diff is not precise enough to be tested here.
-    BOOST_CHECK((data->Lxx - data_num_diff->Lxx).isMuchSmallerThan(1.0, tol));
-    BOOST_CHECK((data->Lxu - data_num_diff->Lxu).isMuchSmallerThan(1.0, tol));
-    BOOST_CHECK((data->Luu - data_num_diff->Luu).isMuchSmallerThan(1.0, tol));
+    BOOST_CHECK((data->Lxx - data_num_diff->Lxx).isZero(tol));
+    BOOST_CHECK((data->Lxu - data_num_diff->Lxu).isZero(tol));
+    BOOST_CHECK((data->Luu - data_num_diff->Luu).isZero(tol));
   } else {
-    BOOST_CHECK((data_num_diff->Lxx).isMuchSmallerThan(1.0, tol));
-    BOOST_CHECK((data_num_diff->Lxu).isMuchSmallerThan(1.0, tol));
-    BOOST_CHECK((data_num_diff->Luu).isMuchSmallerThan(1.0, tol));
+    BOOST_CHECK((data_num_diff->Lxx).isZero(tol));
+    BOOST_CHECK((data_num_diff->Lxu).isZero(tol));
+    BOOST_CHECK((data_num_diff->Luu).isZero(tol));
   }
 }
 
@@ -223,11 +226,11 @@ void test_partial_derivatives_in_cost_sum(CostModelNoFFTypes::Type cost_type,
   cost_sum.calc(data_sum, x, u);
   cost_sum.calcDiff(data_sum, x, u);
 
-  BOOST_CHECK((data->Lx - data_sum->Lx).isMuchSmallerThan(1.0));
-  BOOST_CHECK((data->Lu - data_sum->Lu).isMuchSmallerThan(1.0));
-  BOOST_CHECK((data->Lxx - data_sum->Lxx).isMuchSmallerThan(1.0));
-  BOOST_CHECK((data->Lxu - data_sum->Lxu).isMuchSmallerThan(1.0));
-  BOOST_CHECK((data->Luu - data_sum->Luu).isMuchSmallerThan(1.0));
+  BOOST_CHECK((data->Lx - data_sum->Lx).isZero());
+  BOOST_CHECK((data->Lu - data_sum->Lu).isZero());
+  BOOST_CHECK((data->Lxx - data_sum->Lxx).isZero());
+  BOOST_CHECK((data->Lxu - data_sum->Lxu).isZero());
+  BOOST_CHECK((data->Luu - data_sum->Luu).isZero());
 }
 
 //----------------------------------------------------------------------------//

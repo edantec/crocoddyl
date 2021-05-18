@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2021, University of Edinburgh
+// Copyright (C) 2021, University of Edinburgh, University of Oxford
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -27,8 +27,8 @@ void test_constructor() {
   // Create the CoP support support
   crocoddyl::CoPSupport support(R, box);
 
-  BOOST_CHECK((support.get_R() - R).isMuchSmallerThan(1.0, 1e-9));
-  BOOST_CHECK((support.get_box() - box).isMuchSmallerThan(1.0, 1e-9));
+  BOOST_CHECK(support.get_R().isApprox(R));
+  BOOST_CHECK(support.get_box().isApprox(box));
   BOOST_CHECK(static_cast<std::size_t>(support.get_A().rows()) == 4);
   BOOST_CHECK(static_cast<std::size_t>(support.get_lb().size()) == 4);
   BOOST_CHECK(static_cast<std::size_t>(support.get_ub().size()) == 4);
@@ -41,11 +41,38 @@ void test_constructor() {
   // Create the wrench support
   support = crocoddyl::CoPSupport(R, box);
 
-  BOOST_CHECK((support.get_R() - R).isMuchSmallerThan(1.0, 1e-9));
-  BOOST_CHECK((support.get_box() - box).isMuchSmallerThan(1.0, 1e-9));
+  BOOST_CHECK(support.get_R().isApprox(R));
+  BOOST_CHECK(support.get_box().isApprox(box));
   BOOST_CHECK(static_cast<std::size_t>(support.get_A().rows()) == 4);
   BOOST_CHECK(static_cast<std::size_t>(support.get_lb().size()) == 4);
   BOOST_CHECK(static_cast<std::size_t>(support.get_ub().size()) == 4);
+
+  // Create the wrench support from a reference
+  {
+    crocoddyl::CoPSupport support_from_reference(support);
+
+    BOOST_CHECK(support.get_R().isApprox(support_from_reference.get_R()));
+    BOOST_CHECK(support.get_box().isApprox(support_from_reference.get_box()));
+    BOOST_CHECK(support.get_A().isApprox(support_from_reference.get_A()));
+    for (std::size_t i = 0; i < static_cast<std::size_t>(support.get_ub().size()); ++i) {
+      BOOST_CHECK(support.get_ub()[i] == support_from_reference.get_ub()[i]);
+      BOOST_CHECK(support.get_lb()[i] == support_from_reference.get_lb()[i]);
+    }
+  }
+
+  // Create the wrench support through the copy operator
+  {
+    crocoddyl::CoPSupport support_from_copy;
+    support_from_copy = support;
+
+    BOOST_CHECK(support.get_R().isApprox(support_from_copy.get_R()));
+    BOOST_CHECK(support.get_box().isApprox(support_from_copy.get_box()));
+    BOOST_CHECK(support.get_A().isApprox(support_from_copy.get_A()));
+    for (std::size_t i = 0; i < static_cast<std::size_t>(support.get_ub().size()); ++i) {
+      BOOST_CHECK(support.get_ub()[i] == support_from_copy.get_ub()[i]);
+      BOOST_CHECK(support.get_lb()[i] == support_from_copy.get_lb()[i]);
+    }
+  }
 }
 
 void test_A_matrix_with_rotation_change() {
@@ -63,8 +90,7 @@ void test_A_matrix_with_rotation_change() {
   crocoddyl::CoPSupport support_2(R, box);
 
   for (std::size_t i = 0; i < 4; ++i) {
-    BOOST_CHECK(
-        (support_1.get_A().row(i).head(3) - support_2.get_A().row(i).head(3) * R).isMuchSmallerThan(1.0, 1e-9));
+    BOOST_CHECK((support_1.get_A().row(i).head(3) - support_2.get_A().row(i).head(3) * R).isZero(1e-9));
   }
 }
 

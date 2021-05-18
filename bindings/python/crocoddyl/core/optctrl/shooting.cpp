@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2019-2021, LAAS-CNRS, University of Edinburgh, University of Oxford
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -9,6 +9,7 @@
 #include <vector>
 #include <memory>
 #include "python/crocoddyl/core/core.hpp"
+#include "python/crocoddyl/utils/printable.hpp"
 #include "python/crocoddyl/utils/vector-converter.hpp"
 #include "crocoddyl/core/optctrl/shooting.hpp"
 
@@ -110,11 +111,16 @@ void exposeShootingProblem() {
           "terminalData",
           bp::make_function(&ShootingProblem::get_terminalData, bp::return_value_policy<bp::return_by_value>()),
           "terminal data")
+      .add_property("nthreads", bp::make_function(&ShootingProblem::get_nthreads),
+                    bp::make_function(&ShootingProblem::set_nthreads),
+                    "number of threads launch by the multi-threading support (if you set nthreads <= 1, then "
+                    "nthreads=CROCODDYL_WITH_NTHREADS)")
       .add_property("nx", bp::make_function(&ShootingProblem::get_nx), "dimension of state tuple")
       .add_property("ndx", bp::make_function(&ShootingProblem::get_ndx),
                     "dimension of the tangent space of the state manifold")
       .add_property("nu_max", bp::make_function(&ShootingProblem::get_nu_max),
-                    "dimension of the maximum control vector");
+                    "dimension of the maximum control vector")
+      .def(PrintableVisitor<ShootingProblem>());
 }
 
 }  // namespace python

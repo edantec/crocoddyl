@@ -1,14 +1,15 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2019-2020, University of Edinburgh
+// Copyright (C) 2019-2021, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <iostream>
-#include "crocoddyl/core/utils/exception.hpp"
+
 #include "crocoddyl/core/solvers/box-fddp.hpp"
+#include "crocoddyl/core/utils/exception.hpp"
 
 namespace crocoddyl {
 
@@ -66,7 +67,7 @@ void SolverBoxFDDP::computeGains(const std::size_t t) {
       }
     }
     K_[t].topRows(nu).noalias() = Quu_inv_[t].topLeftCorner(nu, nu) * Qxu_[t].leftCols(nu).transpose();
-    k_[t].topRows(nu).noalias() = -boxqp_sol.x;
+    k_[t].topRows(nu) = -boxqp_sol.x;
 
     // The box-QP clamped the gradient direction; this is important for accounting
     // the algorithm advancement (i.e. stopping criteria)

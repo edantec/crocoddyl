@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2019-2020, LAAS-CNRS, University of Edinburgh
+// Copyright (C) 2019-2021, LAAS-CNRS, University of Edinburgh, University of Oxford
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
@@ -70,6 +70,12 @@ class ActionModelImpulseFwdDynamicsTpl : public ActionModelAbstractTpl<_Scalar> 
   void set_restitution_coefficient(const Scalar r_coeff);
   void set_damping_factor(const Scalar damping);
 
+  /**
+   * @brief Print information on the action model
+   */
+  template <class Scalar>
+  friend std::ostream& operator<<(std::ostream& os, const ActionModelImpulseFwdDynamicsTpl<Scalar>& model);
+
  protected:
   using Base::has_control_limits_;  //!< Indicates whether any of the control limits
   using Base::nr_;                  //!< Dimension of the cost residual
@@ -107,9 +113,9 @@ struct ActionDataImpulseFwdDynamicsTpl : public ActionDataAbstractTpl<_Scalar> {
         multibody(&pinocchio, model->get_impulses()->createData(&pinocchio)),
         costs(model->get_costs()->createData(&multibody)),
         vnone(model->get_state()->get_nv()),
-        Kinv(model->get_state()->get_nv() + model->get_impulses()->get_ni_total(),
-             model->get_state()->get_nv() + model->get_impulses()->get_ni_total()),
-        df_dx(model->get_impulses()->get_ni_total(), model->get_state()->get_ndx()),
+        Kinv(model->get_state()->get_nv() + model->get_impulses()->get_nc_total(),
+             model->get_state()->get_nv() + model->get_impulses()->get_nc_total()),
+        df_dx(model->get_impulses()->get_nc_total(), model->get_state()->get_ndx()),
         dgrav_dq(model->get_state()->get_nv(), model->get_state()->get_nv()) {
     costs->shareMemory(this);
     vnone.setZero();
