@@ -415,6 +415,8 @@ typedef ResidualModelImpulseCoMTpl<double> ResidualModelImpulseCoM;
 typedef ResidualDataImpulseCoMTpl<double> ResidualDataImpulseCoM;
 typedef ResidualModelStateTpl<double> ResidualModelState;
 typedef ResidualDataStateTpl<double> ResidualDataState;
+typedef ResidualModelPairCollisionsTpl<double> ResidualModelPairCollisions;
+typedef ResidualDataPairCollisionsTpl<double> ResidualDataPairCollisions;
 
 DEPRECATED("Use ResidualModelFrameTranslation with CostModelResidual",
            typedef CostModelFrameTranslationTpl<double> CostModelFrameTranslation;)

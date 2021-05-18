@@ -49,6 +49,7 @@ void exposeResidualFrameRotation();
 void exposeResidualFrameTranslation();
 void exposeResidualFrameVelocity();
 void exposeResidualImpulseCoM();
+void exposeResidualPairCollisions();
 void exposeCostState();
 void exposeCostControlGrav();
 void exposeCostControlGravContact();

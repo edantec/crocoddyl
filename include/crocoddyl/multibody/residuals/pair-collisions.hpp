@@ -1,41 +1,37 @@
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
-// Copyright (C) 2020, LAAS-CNRS, Airbus
+// Copyright (C) 2021, University of Edinburgh
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef CROCODDYL_MULTIBODY_COSTS_PAIR_COLLISIONS_HPP_
-#define CROCODDYL_MULTIBODY_COSTS_PAIR_COLLISIONS_HPP_
+#ifndef CROCODDYL_MULTIBODY_RESIDUALS_PAIR_COLLISIONS_HPP_
+#define CROCODDYL_MULTIBODY_RESIDUALS_PAIR_COLLISIONS_HPP_
 
-#include "crocoddyl/core/activations/norm2-barrier.hpp"
+#include "crocoddyl/core/fwd.hpp"
 #include "crocoddyl/multibody/fwd.hpp"
-#include "crocoddyl/core/cost-base.hpp"
+#include "crocoddyl/core/state-base.hpp"
+#include "crocoddyl/core/residual-base.hpp"
 #include "crocoddyl/multibody/states/multibody.hpp"
-#include "crocoddyl/multibody/data/multibody.hpp"
-#include "crocoddyl/core/utils/exception.hpp"
-#include <pinocchio/multibody/fwd.hpp>
-#include <pinocchio/multibody/geometry.hpp>
-#include <pinocchio/multibody/fcl.hpp>
-
-#include <string>
+#include "pinocchio/multibody/geometry.hpp"
+#include "pinocchio/algorithm/jacobian.hpp"
+#include "pinocchio/algorithm/geometry.hpp"
+#include "pinocchio/multibody/fcl.hpp"
 
 namespace crocoddyl {
 
 template <typename _Scalar>
-class CostModelPairCollisionsTpl : public CostModelAbstractTpl<_Scalar> {
+class ResidualModelPairCollisionsTpl : public ResidualModelAbstractTpl<_Scalar> {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   typedef _Scalar Scalar;
   typedef MathBaseTpl<Scalar> MathBase;
   typedef CostModelAbstractTpl<Scalar> Base;
-  typedef CostDataPairCollisionsTpl<Scalar> Data;
+  typedef ResidualDataPairCollisionsTpl<Scalar> Data;
   typedef StateMultibodyTpl<Scalar> StateMultibody;
-  typedef CostDataAbstractTpl<Scalar> CostDataAbstract;
-  typedef ActivationModelAbstractTpl<Scalar> ActivationModelAbstract;
-  typedef ActivationModelNorm2BarrierTpl<Scalar> Activation;
+  typedef ResidualDataAbstractTpl<Scalar> ResidualDataAbstract;
   typedef DataCollectorAbstractTpl<Scalar> DataCollectorAbstract;
   typedef pinocchio::GeometryModel GeometryModel;
   
@@ -43,48 +39,40 @@ class CostModelPairCollisionsTpl : public CostModelAbstractTpl<_Scalar> {
   typedef typename MathBase::VectorXs VectorXs;
   typedef typename MathBase::MatrixXs MatrixXs;
 
-  CostModelPairCollisionsTpl(boost::shared_ptr<StateMultibody> state,
-                             boost::shared_ptr<ActivationModelAbstract> activation,
-                             const std::size_t& nu,
-                             boost::shared_ptr<GeometryModel> geom_model,
-                             const pinocchio::PairIndex& pair_id, // const std::size_t col_id, // The id of the pair of colliding objects
-                             const pinocchio::JointIndex& joint_id); // Used to calculate the Jac at the joint
-
-  CostModelPairCollisionsTpl(boost::shared_ptr<StateMultibody> state,
-                             const Scalar& threshold,
+  ResidualModelPairCollisionsTpl(boost::shared_ptr<StateMultibody> state,
                              const std::size_t& nu,
                              boost::shared_ptr<GeometryModel> geom_model,
                              const pinocchio::PairIndex& pair_id, // const std::size_t col_id, // The id of the pair of colliding objects
                              const pinocchio::JointIndex& joint_id); // Used to calculate the Jac at the joint
   
-  virtual ~CostModelPairCollisionsTpl();
+  virtual ~ResidualModelPairCollisionsTpl();
 
-  virtual void calc(const boost::shared_ptr<CostDataAbstract>& data, const Eigen::Ref<const VectorXs>& x,
+  virtual void calc(const boost::shared_ptr<ResidualDataAbstract>& data, const Eigen::Ref<const VectorXs>& x,
                     const Eigen::Ref<const VectorXs>& u);
-  virtual void calcDiff(const boost::shared_ptr<CostDataAbstract>& data, const Eigen::Ref<const VectorXs>& x,
+  virtual void calcDiff(const boost::shared_ptr<ResidualDataAbstract>& data, const Eigen::Ref<const VectorXs>& x,
                         const Eigen::Ref<const VectorXs>& u);
-  virtual boost::shared_ptr<CostDataAbstract> createData(DataCollectorAbstract* const data);
-
-  const pinocchio::GeometryModel& get_geomModel() const;  
+  virtual boost::shared_ptr<ResidualDataAbstract> createData(DataCollectorAbstract* const data);
 
  protected:
-  
-  using Base::activation_;
+  using Base::nu_;
   using Base::state_;
+  using Base::unone_;
+  using Base::v_dependent_;
 
  private:
   boost::shared_ptr<pinocchio::GeometryModel > geom_model_;
+  boost::shared_ptr<typename StateMultibody::PinocchioModel> pin_model_;
   pinocchio::PairIndex pair_id_;
   pinocchio::JointIndex joint_id_;
 };
 
 template <typename _Scalar>
-struct CostDataPairCollisionsTpl : public CostDataAbstractTpl<_Scalar> {
+struct ResidualDataPairCollisionsTpl : public ResidualDataAbstractTpl<_Scalar> {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   typedef _Scalar Scalar;
   typedef MathBaseTpl<Scalar> MathBase;
-  typedef CostDataAbstractTpl<Scalar> Base;
+  typedef ResidualDataAbstractTpl<Scalar> Base;
   typedef DataCollectorAbstractTpl<Scalar> DataCollectorAbstract;
   typedef typename MathBase::VectorXs VectorXs;
   typedef typename MathBase::MatrixXs MatrixXs;
@@ -94,11 +82,10 @@ struct CostDataPairCollisionsTpl : public CostDataAbstractTpl<_Scalar> {
   typedef typename MathBase::Vector6s Vector6s;
 
   template <template <typename Scalar> class Model>
-  CostDataPairCollisionsTpl(Model<Scalar>* const model, DataCollectorAbstract* const data)
+  ResidualDataPairCollisionsTpl(Model<Scalar>* const model, DataCollectorAbstract* const data)
       : Base(model, data),
         geom_data(pinocchio::GeometryData(model->get_geomModel())),
-        J(Matrix6xs::Zero(6, model->get_state()->get_nv())),
-        Arr_J(MatrixXs::Zero(model->get_activation()->get_nr(), model->get_state()->get_nv())) {
+        J(Matrix6xs::Zero(6, model->get_state()->get_nv())) {
     // Check that proper shared data has been passed
     DataCollectorMultibodyTpl<Scalar>* d = dynamic_cast<DataCollectorMultibodyTpl<Scalar>*>(shared);
     if (d == NULL) {
@@ -112,7 +99,6 @@ struct CostDataPairCollisionsTpl : public CostDataAbstractTpl<_Scalar> {
   pinocchio::DataTpl<Scalar>* pinocchio;
 
   Matrix6xs J;
-  MatrixXs Arr_J;
   
   using Base::shared;
   using Base::activation;
@@ -128,6 +114,6 @@ struct CostDataPairCollisionsTpl : public CostDataAbstractTpl<_Scalar> {
 /* --- Details -------------------------------------------------------------- */
 /* --- Details -------------------------------------------------------------- */
 /* --- Details -------------------------------------------------------------- */
-#include "crocoddyl/multibody/costs/pair-collisions.hxx"
+#include "crocoddyl/multibody/residuals/pair-collisions.hxx"
 
-#endif  // CROCODDYL_MULTIBODY_COSTS_PAIR_COLLISIONS_HPP_
+#endif  // CROCODDYL_MULTIBODY_RESIDUALS_PAIR_COLLISIONS_HPP_

@@ -46,6 +46,7 @@ void exposeMultibody() {
   exposeResidualFrameTranslation();
   exposeResidualFrameVelocity();
   exposeResidualImpulseCoM();
+  exposeResidualPairCollisions();
   exposeCostState();
   exposeCostControlGrav();
   exposeCostControlGravContact();
