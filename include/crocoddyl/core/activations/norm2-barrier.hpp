@@ -61,8 +61,9 @@ class ActivationModelNorm2BarrierTpl : public ActivationModelAbstractTpl<_Scalar
     
     if(d->distance_ < threshold_) {
       data->Ar = (d->distance_ - threshold_) / d->distance_ * r;
-      data->Arr.diagonal() = threshold_ * r.array().square() / std::pow(d->distance_, 3);
-      data->Arr.diagonal().array() += (d->distance_ - threshold_) / d->distance_;
+      data->Arr.diagonal() = r.array().square() / std::pow(d->distance_, 2); //GN Hessian approximation
+      //data->Arr.diagonal() = threshold_ * r.array().square() / std::pow(d->distance_, 3);
+      //data->Arr.diagonal().array() += (d->distance_ - threshold_) / d->distance_;
       //data->Arr.diagonal() = (MatrixXs::Identity(nr_, nr_) * (d->distance_ - threshold_) / d->distance_ + threshold_ * r * r.transpose() / std::pow(d->distance_, 3)).diagonal();
     }
     else {
