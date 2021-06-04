@@ -25,8 +25,9 @@
 #include "crocoddyl/multibody/costs/cost-sum.hpp"
 #include "crocoddyl/multibody/costs/frame-placement.hpp"
 #include "crocoddyl/multibody/costs/state.hpp"
-#include "crocoddyl/multibody/costs/pair-collisions.hpp"
+#include "crocoddyl/multibody/residuals/pair-collision.hpp"
 #include "crocoddyl/core/costs/control.hpp"
+#include "crocoddyl/core/activations/2norm-barrier.hpp"
 
 namespace crocoddyl {
 namespace benchmark {
@@ -39,11 +40,14 @@ void build_arm_action_models_w_collision(boost::shared_ptr<crocoddyl::ActionMode
   typedef typename crocoddyl::MathBaseTpl<Scalar>::Matrix3s Matrix3s;
   typedef typename crocoddyl::FramePlacementTpl<Scalar> FramePlacement;
   typedef typename crocoddyl::CostModelAbstractTpl<Scalar> CostModelAbstract;
+  typedef typename crocoddyl::ResidualModelAbstractTpl<Scalar> ResidualModelAbstract;
   typedef typename crocoddyl::CostModelFramePlacementTpl<Scalar> CostModelFramePlacement;
   typedef typename crocoddyl::CostModelStateTpl<Scalar> CostModelState;
   typedef typename crocoddyl::CostModelControlTpl<Scalar> CostModelControl;
+  typedef typename crocoddyl::ResidualModelPairCollisionTpl<Scalar> ResidualModelPairCollision;
   typedef typename crocoddyl::CostModelSumTpl<Scalar> CostModelSum;
   typedef typename crocoddyl::ActuationModelFullTpl<Scalar> ActuationModelFull;
+  typedef typename crocoddyl::ActivationModel2NormBarrierTpl<Scalar> ActivationModel2NormBarrier;
   typedef typename crocoddyl::DifferentialActionModelFreeFwdDynamicsTpl<Scalar> DifferentialActionModelFreeFwdDynamics;
   typedef typename crocoddyl::IntegratedActionModelEulerTpl<Scalar> IntegratedActionModelEuler;
 
@@ -131,10 +135,15 @@ void build_arm_action_models_w_collision(boost::shared_ptr<crocoddyl::ActionMode
 
 
   for(int i=0;i<num_obs; ++i) {
-    obstacleCosts.push_back(boost::make_shared<CostModelPairCollisions>(
-          state, RADIUS+obs_radius[i]+add_threshold,
-          actuation->get_nu(),
-          boost::shared_ptr<pinocchio::GeometryModel>(boost::make_shared<pinocchio::GeometryModel>(geomModel)), i, pin_joint_id));
+	boost::shared_ptr<ActivationModel2NormBarrier> activation2Norm = boost::make_shared<ActivationModel2NormBarrier>(3,RADIUS+obs_radius[i]+add_threshold);
+	boost::shared_ptr<ResidualModelAbstract> residualModel = boost::make_shared<ResidualModelPairCollision>(state, 
+	                                                     actuation->get_nu(),
+	                                                     boost::shared_ptr<pinocchio::GeometryModel>(boost::make_shared<pinocchio::GeometryModel>(geomModel)),
+	                                                     i, pin_joint_id); 
+    obstacleCosts.push_back(boost::make_shared<CostModelResidual>(
+          state, 
+          activation2Norm,
+          residualModel));
   }
 
   

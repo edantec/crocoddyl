@@ -11,7 +11,7 @@
 #include "crocoddyl/core/activations/quadratic-ref.hpp"
 #include "crocoddyl/core/activations/quadratic-flat-exp.hpp"
 #include "crocoddyl/core/activations/quadratic-flat-log.hpp"
-#include "crocoddyl/core/activations/norm2-barrier.hpp"
+#include "crocoddyl/core/activations/2norm-barrier.hpp"
 #include "crocoddyl/core/activations/smooth-1norm.hpp"
 #include "crocoddyl/core/activations/smooth-2norm.hpp"
 #include "crocoddyl/core/activations/weighted-quadratic.hpp"
@@ -38,8 +38,8 @@ std::ostream& operator<<(std::ostream& os, ActivationModelTypes::Type type) {
     case ActivationModelTypes::ActivationModelQuadFlatLog:
       os << "ActivationModelQuadFlatLog";
       break;
-    case ActivationModelTypes::ActivationModelNorm2Barrier:
-      os << "ActivationModelNorm2Barrier";
+    case ActivationModelTypes::ActivationModel2NormBarrier:
+      os << "ActivationModel2NormBarrier";
       break;
     case ActivationModelTypes::ActivationModelSmooth1Norm:
       os << "ActivationModelSmooth1Norm";
@@ -91,8 +91,8 @@ boost::shared_ptr<crocoddyl::ActivationModelAbstract> ActivationModelFactory::cr
     case ActivationModelTypes::ActivationModelQuadFlatLog:
       activation = boost::make_shared<crocoddyl::ActivationModelQuadFlatLog>(nr, alpha);
       break;
-    case ActivationModelTypes::ActivationModelNorm2Barrier:
-      activation = boost::make_shared<crocoddyl::ActivationModelNorm2Barrier>(nr, threshold);
+    case ActivationModelTypes::ActivationModel2NormBarrier:
+      activation = boost::make_shared<crocoddyl::ActivationModel2NormBarrier>(nr, alpha);
       break;
     case ActivationModelTypes::ActivationModelSmooth1Norm:
       activation = boost::make_shared<crocoddyl::ActivationModelSmooth1Norm>(nr, eps);

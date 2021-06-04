@@ -45,7 +45,7 @@ void exposeActivationQuad();
 void exposeActivationQuadRef();
 void exposeActivationQuadFlatExp();
 void exposeActivationQuadFlatLog();
-void exposeActivationNorm2Barrier();
+void exposeActivation2NormBarrier();
 void exposeActivationWeightedQuad();
 void exposeActivationQuadraticBarrier();
 void exposeActivationWeightedQuadraticBarrier();
