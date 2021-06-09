@@ -49,7 +49,11 @@ void exposeResidualFrameRotation();
 void exposeResidualFrameTranslation();
 void exposeResidualFrameVelocity();
 void exposeResidualImpulseCoM();
+
+#ifdef PINOCCHIO_WITH_HPP_FCL
 void exposeResidualPairCollision();
+#endif
+
 void exposeCostState();
 void exposeCostControlGrav();
 void exposeCostControlGravContact();
