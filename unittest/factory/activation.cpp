@@ -40,9 +40,6 @@ std::ostream& operator<<(std::ostream& os, ActivationModelTypes::Type type) {
     case ActivationModelTypes::ActivationModelQuadFlatLog:
       os << "ActivationModelQuadFlatLog";
       break;
-    case ActivationModelTypes::ActivationModel2NormBarrier:
-      os << "ActivationModel2NormBarrier";
-      break;
     case ActivationModelTypes::ActivationModelSmooth1Norm:
       os << "ActivationModelSmooth1Norm";
       break;
@@ -96,9 +93,6 @@ boost::shared_ptr<crocoddyl::ActivationModelAbstract> ActivationModelFactory::cr
       break;
     case ActivationModelTypes::ActivationModelQuadFlatLog:
       activation = boost::make_shared<crocoddyl::ActivationModelQuadFlatLog>(nr, alpha);
-      break;
-    case ActivationModelTypes::ActivationModel2NormBarrier:
-      activation = boost::make_shared<crocoddyl::ActivationModel2NormBarrier>(nr, alpha);
       break;
     case ActivationModelTypes::ActivationModelSmooth1Norm:
       activation = boost::make_shared<crocoddyl::ActivationModelSmooth1Norm>(nr, eps);
