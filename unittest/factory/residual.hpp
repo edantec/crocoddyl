@@ -9,6 +9,12 @@
 #ifndef CROCODDYL_RESIDUAL_FACTORY_HPP_
 #define CROCODDYL_RESIDUAL_FACTORY_HPP_
 
+#ifdef PINOCCHIO_WITH_HPP_FCL
+#include <pinocchio/multibody/fcl.hpp>
+#include <pinocchio/multibody/geometry.hpp>
+#include <pinocchio/algorithm/jacobian.hpp>
+#include <pinocchio/algorithm/geometry.hpp>
+#endif
 #include "state.hpp"
 #include "residual.hpp"
 #include "crocoddyl/core/residual-base.hpp"
@@ -30,6 +36,7 @@ struct ResidualModelTypes {
     ResidualModelFrameTranslation,
     ResidualModelFrameVelocity,
     ResidualModelControlGrav,
+    ResidualModelPairCollision,
     NbResidualModelTypes
   };
   static std::vector<Type> init_all() {
